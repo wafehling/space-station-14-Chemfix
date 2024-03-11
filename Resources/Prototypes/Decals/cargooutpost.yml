@@ -1,0 +1,70 @@
+- type: decal
+  id: CargoOutpostSell1
+  tags: ["station"]
+  sprite:
+    sprite: Decals/cargosigns.rsi
+    state: cargosell1
+
+- type: decal
+  id: CargoOutpostSell2
+  tags: ["station"]
+  sprite:
+    sprite: Decals/cargosigns.rsi
+    state: cargosell2
+
+- type: decal
+  id: CargoOutpostSell13
+  tags: ["station"]
+  sprite:
+    sprite: Decals/cargosigns.rsi
+    state: cargosell3
+
+- type: decal
+  id: CargoOutpostSell14
+  tags: ["station"]
+  sprite:
+    sprite: Decals/cargosigns.rsi
+    state: cargosell4
+
+- type: decal
+  id: CargoOutpostBuy1
+  tags: ["station"]
+  sprite:
+    sprite: Decals/cargosigns.rsi
+    state: cargobuy1
+
+- type: decal
+  id: CargoOutpostBuy2
+  tags: ["station"]
+  sprite:
+    sprite: Decals/cargosigns.rsi
+    state: cargobuy2
+
+- type: decal
+  id: CargoOutpostBuy3
+  tags: ["station"]
+  sprite:
+    sprite: Decals/cargosigns.rsi
+    state: cargobuy3
+
+- type: decal
+  id: CargoOutpostBuy4
+  tags: ["station"]
+  sprite:
+    sprite: Decals/cargosigns.rsi
+    state: cargobuy4
+
+- type: decal
+  id: CargoOutpostSpesos1
+  tags: ["station"]
+  sprite:
+    sprite: Decals/cargosigns.rsi
+    state: cargospesos1
+
+- type: decal
+  id: CargoOutpostSpesos2
+  tags: ["station"]
+  sprite:
+    sprite: Decals/cargosigns.rsi
+    state: cargospesos2
+

@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "license": "CC-BY-SA-3.0",
+  "copyright": "Created by wafehling (github) partially from sprites by by EmoGarbage404 (https://github.com/space-wizards/space-station-14/blob/e3180aec030edc6fef25e0262831c2215d9bb2a8/Resources/Textures/Structures/Storage/Crates/generic.rsi/meta.json)",
+  "size": {
+    "x": 32,
+    "y": 32
+  },
+  "states": [
+    {
+      "name": "cargobuy1"
+    },
+    {
+      "name": "cargobuy2"
+    },
+    {
+      "name": "cargobuy3"
+    },
+    {
+      "name": "cargobuy4"
+    },
+    {
+      "name": "cargosell1"
+    },
+    {
+      "name": "cargosell2"
+    },
+    {
+      "name": "cargosell3"
+    },
+    {
+      "name": "cargosell4"
+    },
+    {
+      "name": "cargospesos1"
+    },
+    {
+      "name": "cargospesos2"
+    }
+  ]
+}
