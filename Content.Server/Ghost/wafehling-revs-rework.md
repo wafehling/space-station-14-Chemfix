@@ -12,13 +12,13 @@ Here is how most rev rounds go, in my experience.
 
 ```mermaid
 flowchart TD
-    A[Headrevs spawn roundstart, with no knowledge or way of easily communicating with other headrevs/revs (BAD)] --> B;
-    B[Immediate goals are to convert as many people as quickly as possible (BAD), with little discrmination of who (BAD) besides meta-targeting cargo and science (BAD) for flashes, the only way of converting (BAD)] --> C{The first few conversions are...};
-	C -->|Good at the revs metagame| D[...competent underlings who don't raise the alarm. Someone brings the headrev a duffel bag full of flashes, and they mass-convert the station rapidly (BAD)] --> F;]
-	C -->|Bad at the revs metagame| E[...eager to cause violence, sloppy, or indifferent to the cause. The revs are discovered as the largely seperate headrevs get desperate and are caught trying to steal flashes on their own (VERY BAD), or by an eager recruit jabbing a spear into the captain while screaming about revolution 10 seconds after conversion, blowing the whole operation for everyone (VERY BAD).] -- > G
-    F[The brand new army largely ignores the headrev, and a large roaming group of them sloppily murder a headrev and spark violence on their own, (BAD), or begins openly causing chaos and murdering sec/command/mindshielded crew (VERY BAD)] --> H;
-    G[Sec, command, and any mindshielded crew instantly start a campaign of murder/mindshielding anyone who doesn't drop their weapons and surrender, the headrevs are quickly murdered or captured (As good as death if they try to mindshield you), and the round ends quickly, violently, and unsatisfyingly (VERY BAD)]
-    H[Any command/Sec caught unprepared are quickly murdered/gibbed (VERY BAD), and the round goes on for an indeterminate amount of time while the rest are hunted down, sometimes quite a long time, while the growing army of ghosts watches (VERY BAD)]
+    A[Headrevs spawn roundstart, with no knowledge or way of easily communicating with other headrevs/revs  ] --> B;
+    B[Immediate goals are to convert as many people as quickly as possible  , with little discrmination of who   besides meta-targeting cargo and science   for flashes, the only way of converting  ] --> C{The first few conversions are...};
+	C -->|Good at the revs metagame| D[...competent underlings who don't raise the alarm. Someone brings the headrev a duffel bag full of flashes, and they mass-convert the station rapidly  ] --> F;]
+	C -->|Bad at the revs metagame| E[...eager to cause violence, sloppy, or indifferent to the cause. The revs are discovered as the largely seperate headrevs get desperate and are caught trying to steal flashes on their own  , or by an eager recruit jabbing a spear into the captain while screaming about revolution 10 seconds after conversion, blowing the whole operation for everyone.] -- > G
+    F[The brand new army largely ignores the headrev, and a large roaming group of them sloppily murder a headrev and spark violence on their own,  , or begins openly causing chaos and murdering sec/command/mindshielded crew  ] --> H;
+    G[Sec, command, and any mindshielded crew instantly start a campaign of murder/mindshielding anyone who doesn't drop their weapons and surrender, the headrevs are quickly murdered or captured (As good as death if they try to mindshield you), and the round ends quickly, violently, and unsatisfyingly  ]
+    H[Any command/Sec caught unprepared are quickly murdered/gibbed  , and the round goes on for an indeterminate amount of time while the rest are hunted down, sometimes quite a long time, while the growing army of ghosts watches  ]
 ```
 
 ## Problems
