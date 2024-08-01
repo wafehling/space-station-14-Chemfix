@@ -99,6 +99,23 @@
         maxVol: 30
 
 - type: entity
+  id: OrganJanitorRatStomach
+  parent: OrganAnimalStomach
+  name: stomach
+  noSpawn: true
+  components:
+  - type: Stomach
+    specialDigestible:
+      tags:
+      - ClothMade
+      - Paper
+      - Trash
+  - type: SolutionContainerManager
+    solutions:
+      stomach:
+        maxVol: 50
+
+- type: entity
   id: OrganAnimalLiver
   parent: BaseAnimalOrgan
   name: liver

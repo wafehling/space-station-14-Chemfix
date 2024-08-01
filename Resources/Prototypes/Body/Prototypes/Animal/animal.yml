@@ -41,3 +41,26 @@
       - feet
     feet:
       part: FeetAnimal
+
+- type: body
+  id: JanitorRat
+  name: "janitorrat"
+  root: torso
+  slots:
+    torso:
+      part: TorsoAnimal
+      connections:
+      - legs
+      organs:
+        lungs: OrganAnimalLungs
+        stomach: OrganJanitorRatStomach
+        stomach: OrganMouseStomach
+        liver: OrganAnimalLiver
+        heart: OrganAnimalHeart
+        kidneys: OrganAnimalKidneys
+    legs:
+      part: LegsAnimal
+      connections:
+      - feet
+    feet:
+      part: FeetAnimal

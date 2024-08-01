@@ -7,6 +7,9 @@ ghost-role-component-default-rules = All normal rules apply unless an administra
 ghost-role-information-mouse-name = Mouse
 ghost-role-information-mouse-description = A hungry and mischievous mouse.
 
+ghost-role-information-janitorrat-name = Janitor Rat
+ghost-role-information-janitorrat-description = A genetically and cybernetically augmented rat with a second stomach that can consume trash.
+
 ghost-role-information-mothroach-name = Mothroach
 ghost-role-information-mothroach-description = A cute but mischievous mothroach.
 

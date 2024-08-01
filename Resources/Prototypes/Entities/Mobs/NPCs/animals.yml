@@ -1661,6 +1661,69 @@
         Base: splat-2
 
 - type: entity
+  name: janitorrat
+  parent: MobMouse
+  id: JanitorRat
+  description: Squeak!
+  components:
+  - type: Body
+    prototype: JanitorRat
+  - type: GhostRole
+    makeSentient: true
+    allowSpeech: true
+    allowMovement: true
+    name: ghost-role-information-janitorrat-name
+    description: ghost-role-information-janitorrat-description
+  - type: GhostTakeoverAvailable
+  - type: Sprite
+    drawdepth: SmallMobs
+    sprite: Mobs/Animals/mouse.rsi
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base", "movement"]
+      state: mouse-0
+  - type: SpriteMovement
+      movementLayers:
+        movement:
+          state: mouse-moving-0
+      noMovementLayers:
+        movement:
+          state: mouse-0
+  - type: Clothing
+    quickEquip: false
+    sprite: obs/Animals/mouse.rsi
+    equippedPrefix: 0
+    slots:
+    - HEAD
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: mouse-0
+      Critical:
+        Base: dead-0
+      Dead:
+        Base: splat-0
+  - type: Food
+  - type: Thirst
+    startingThirst: 25  # spawn with Okay thirst state
+    thresholds:
+      OverHydrated: 35
+      Okay: 25
+      Thirsty: 15
+      Parched: 10
+      Dead: 0
+    baseDecayRate: 0.04
+  - type: Hunger
+    currentHunger: 25   # spawn with Okay hunger state
+    thresholds:
+      Overfed: 35
+      Okay: 25
+      Peckish: 15
+      Starving: 10
+      Dead: 0
+    baseDecayRate: 0.2
+
+
+- type: entity
   name: lizard #Weh
   parent: SimpleMobBase
   id: MobLizard
@@ -3186,4 +3249,3 @@
   components:
   - type: ReplacementAccent
     accent: nymph
-    

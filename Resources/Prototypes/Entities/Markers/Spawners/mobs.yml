@@ -16,6 +16,9 @@
       - MobMouse
       - MobMouse1
       - MobMouse2
+    rarePrototypes:
+      - JanitorRat
+    rareChance: 0.99
 
 - type: entity
   name: Cockroach Spawner
