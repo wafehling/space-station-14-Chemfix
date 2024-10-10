@@ -1,3 +1,26 @@
+# "Mixologist" Time req
+- type: loadoutEffectGroup
+  id: Mixologist
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobBartender
+      time: 36000 #10 hrs
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:DepartmentTimeRequirement
+      department: Medical
+      time: 36000 # 10 hrs
+# Senior times
+- type: loadoutEffectGroup
+  id: SeniorBartender
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobBartender
+      time: 187200 #52 hrs (1 hour per week for 1 year)
 # Head
 - type: loadout
   id: BartenderHead
@@ -25,6 +48,12 @@
   equipment:
     jumpsuit: ClothingUniformJumpsuitBartenderPurple
 
+# Neck
+- type: loadout
+  id: RedTie
+  equipment:
+    neck: ClothingNeckTieRed
+
 # Outer clothing
 - type: loadout
   id: BartenderApron
@@ -40,3 +69,27 @@
   id: BartenderWintercoat
   equipment:
     outerClothing: ClothingOuterWinterBar
+
+# id
+- type: loadout
+  id: BartenderPDA
+  equipment:
+    id: BartenderPDA
+
+- type: loadout
+  id: SeniorBartenderPDA
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: SeniorBartender
+  equipment:
+    id: SeniorBartenderPDA
+
+ # Trinket
+- type: loadout
+  id: ChemMasterFlatpack
+  effects:
+  - !type:GroupLoadoutEffect
+    proto: Mixologist
+  storage:
+    back:
+    - ChemMasterFlatpack

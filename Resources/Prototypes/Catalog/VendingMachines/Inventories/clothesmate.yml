@@ -84,6 +84,7 @@
     ClothingHandsGlovesColorWhite: 2
     ClothingHandsGlovesColorRed: 2
     ClothingHandsGlovesColorBlue: 2
+    ClothingHandsGlovesColorTeal: 2
     ClothingHandsGlovesColorGreen: 2
     ClothingHandsGlovesColorOrange: 2
     ClothingHandsGlovesColorPurple: 2
@@ -93,4 +94,6 @@
     ClothingMaskNeckGaiter: 2
     ClothingUniformJumpsuitTacticool: 1
     ClothingUniformJumpskirtTacticool: 1
+    ClothingMaskGas: 1
+
   # DO NOT ADD MORE, USE UNIFORM DYING

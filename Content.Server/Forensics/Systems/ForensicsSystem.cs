@@ -1,5 +1,4 @@
 using Content.Server.Body.Components;
-using Content.Server.Chemistry.Containers.EntitySystems;
 using Content.Server.DoAfter;
 using Content.Server.Fluids.EntitySystems;
 using Content.Server.Forensics.Components;
@@ -10,7 +9,6 @@ using Content.Shared.Chemistry.Components;
 using Content.Shared.Chemistry.Reagent;
 using Content.Shared.Chemistry.Components.SolutionManager;
 using Content.Shared.DoAfter;
-using Content.Shared.Fluids.Components;
 using Content.Shared.Forensics;
 using Content.Shared.Interaction;
 using Content.Shared.Interaction.Events;
@@ -19,6 +17,7 @@ using Content.Shared.Weapons.Melee.Events;
 using Robust.Shared.Random;
 using Content.Shared.Verbs;
 using Robust.Shared.Utility;
+using Robust.Shared.GameObjects;
 
 namespace Content.Server.Forensics
 {
@@ -28,7 +27,7 @@ namespace Content.Server.Forensics
         [Dependency] private readonly InventorySystem _inventory = default!;
         [Dependency] private readonly DoAfterSystem _doAfterSystem = default!;
         [Dependency] private readonly PopupSystem _popupSystem = default!;
-        [Dependency] private readonly SolutionContainerSystem _solutionContainerSystem = default!;
+        [Dependency] private readonly SharedSolutionContainerSystem _solutionContainerSystem = default!;
 
         public override void Initialize()
         {
@@ -135,6 +134,26 @@ namespace Content.Server.Forensics
             {
                 dest.Fingerprints.Add(print);
             }
+        }
+        public string GetNameFromDNA(string DNA)
+        {
+            var query = EntityQueryEnumerator<DnaComponent>();
+
+            String outputName = "OH GOD OH FUCK IT'S BROKEN";
+            //iterate over every DNAcomponent in the server until you find one that matches the given DNA
+            while (query.MoveNext(out var sourceUID, out var sourceComp))
+            {
+                if (sourceComp.DNA.Equals(DNA))
+                {
+
+                    if (EntityManager.TryGetComponent(sourceUID, out MetaDataComponent? metaData))
+                    {
+                        //output the name of the entity with the given DNA
+                        outputName = metaData.EntityName;
+                    }
+                }
+            }
+            return outputName;
         }
 
         public List<string> GetSolutionsDNA(EntityUid uid)

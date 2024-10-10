@@ -99,6 +99,19 @@
     state: icon
 
 - type: construction
+  name: double eyepatch
+  id: doubleeyepatch
+  graph: DoubleEyepatch
+  startNode: start
+  targetNode: doubleeyepatch
+  category: construction-category-tools
+  objectType: Item
+  description: Two eyepatches, for twice the swashbuckling.
+  icon:
+    sprite: Clothing/Eyes/Misc/doubleeyepatch.rsi
+    state: icon
+
+- type: construction
   name: flower wreath
   id: flowerwreath
   graph: flowerwreath
@@ -145,7 +158,7 @@
   targetNode: shell
   category: construction-category-weapons
   objectType: Item
-  description: A homemade shotgun shell that shoots painful glass shrapnel. The spread is so wide that it couldn't hit the broad side of a Barn
+  description: A homemade shotgun shell that shoots painful glass shrapnel. The spread is so wide that it couldn't hit the broad side of a barn.
   icon:
     sprite: Objects/Weapons/Guns/Ammunition/Casings/shotgun_shell.rsi
     state: improvised
@@ -190,6 +203,32 @@
   objectType: Item
 
 - type: construction
+  name: hemp cloth
+  id: HempWovenCloth
+  graph: HempObjects
+  startNode: start
+  targetNode: hempcloth
+  category: construction-category-misc
+  description: "A homemade piece of hempen cloth, it feels coarse."
+  icon:
+    sprite: Objects/Materials/materials.rsi
+    state: hemp_cloth_3
+  objectType: Item
+
+- type: construction
+  name: hemp sack
+  id: hempWovenSack
+  graph: HempWovenSack
+  startNode: start
+  targetNode: hempsack
+  category: construction-category-misc
+  description: "A woven hemp sack. Feels sturdy."
+  icon:
+    sprite: Objects/Storage/hempsack.rsi
+    state: icon
+  objectType: Item
+
+- type: construction
   name: straw hat
   id: strawHat
   graph: StrawHat
@@ -214,3 +253,42 @@
   icon:
     sprite: Objects/Weapons/Bombs/pipebomb.rsi
     state: icon
+
+- type: construction
+  name: rolling pin
+  id: rollingpin
+  graph: WoodenRollingPin
+  startNode: start
+  targetNode: rollingpin
+  category: construction-category-tools
+  objectType: Item
+  description: A rolling pin, used for cooking and defending the kitchen.
+  icon:
+    sprite: Objects/Tools/rolling_pin.rsi
+    state: icon
+
+- type: construction
+  name: yarn noodles
+  id: yarnnoodles
+  graph: YarnNoodles
+  startNode: start
+  targetNode: noodles
+  category: construction-category-misc
+  objectType: Item
+  description: A Mothchelin 3-star meal!
+  icon:
+    sprite: Objects/Fun/toys.rsi
+    state: yarn-noodles
+
+- type: construction
+  name: fabric scrap salad
+  id: fabricscrapsalad
+  graph: FabricScrapSalad
+  startNode: start
+  targetNode: salad
+  category: construction-category-misc
+  objectType: Item
+  description: A home-made recipe involving a pair of scissors and being very sneaky.
+  icon:
+    sprite: Objects/Fun/toys.rsi
+    state: fabric-scrap-salad

@@ -20,6 +20,7 @@ flavor-base-fishy = fishy
 flavor-base-crabby = crabby
 flavor-base-cheesy = cheesy
 flavor-base-funny = funny
+flavor-base-strange = strange
 flavor-base-tingly = tingly
 flavor-base-acid = acidic
 flavor-base-leafy = leafy
@@ -31,6 +32,7 @@ flavor-base-peppery = peppery
 flavor-base-slimy = slimy
 flavor-base-magical = magical
 flavor-base-fiber = fibrous
+flavor-base-trash = like rubbish
 flavor-base-cold = cold
 flavor-base-spooky = spooky
 flavor-base-smokey = smokey
@@ -50,6 +52,9 @@ flavor-base-horrible = horrible
 # lmao
 flavor-base-terrible = terrible
 flavor-base-mindful = mindful
+flavor-base-chewy = chewy
+flavor-base-kingsoda = like you're a champion
+flavor-base-drinkdrink = like dogshit
 
 # Complex flavors. Put a flavor here when you want something that's more
 # specific.
@@ -123,6 +128,7 @@ flavor-complex-meatballs = like meatballs
 flavor-complex-nettles = like nettles
 flavor-complex-jungle = like jungle
 flavor-complex-vegetables = like vegetables
+flavor-complex-cherry = like cherries
 # use it when there multiple types of veggies
 
 ## Complex foodstuffs (cooked foods, joke flavors, etc)
@@ -172,6 +178,13 @@ flavor-complex-violets = like violets
 flavor-complex-pyrotton = like a burning mouth
 flavor-complex-mothballs = like mothballs
 flavor-complex-paint-thinner = like paint thinner
+flavor-complex-numbing-tranquility = like numbing tranquility
+flavor-complex-true-nature = like the true nature of reality
+flavor-complex-false-meat = not entirely unlike meat
+flavor-complex-paper = like mushy pulp
+flavor-complex-compressed-meat = like compressed meat
+flavor-complex-finfin = like your best friend
+flavor-complex-radiation = like radiation
 
 # Drink-specific flavors.
 
@@ -255,18 +268,29 @@ flavor-complex-themartinez = like violets and lemon vodka
 flavor-complex-cogchamp = like brass
 flavor-complex-white-gilgamesh = like lightly carbonated cream
 flavor-complex-antifreeze = warm
+flavor-complex-cottonbool = like an angry cloud
+flavor-complex-genderfluid = transitional
+flavor-complex-thavenbad = like you need to pretend you like it
+flavor-complex-zombieslushie = like frostbitten meat
 
 ### This is exactly what pilk tastes like. I'm not even joking. I might've been a little drunk though
 flavor-complex-pilk = like sweet milk
+
+flavor-complex-apple-martini-crystal-lite = tastes like imitation appletini
+flavor-complex-horsepussy = tastes like death and a subsequent memorial
 
 # Medicine/chemical-specific flavors.
 
 ## Generic flavors.
 flavor-complex-medicine = like medicine
-
+flavor-complex-cigarettes = like cigarettes
 flavor-complex-carpet = like a handful of fur
 flavor-complex-bee = unbeelievable
 flavor-complex-sax = like jazz
 flavor-complex-bottledlightning = like lightning in a bottle
 flavor-complex-punishment = like punishment
+flavor-complex-crud = like crud
+flavor-complex-snotty = like snot
+flavor-complex-speed = like speed
 flavor-weh = like weh
+flavour-stardust = like stardust

@@ -253,6 +253,9 @@
     - id: ToolboxGoldFilled
       prob: 0.001
       orGroup: Swag
+    - id: ClothingEyesGlassesGarMecha
+      prob: 0.01
+      orGroup: Swag
     - id: ClothingEyesGlassesGar
       prob: 0.01
       orGroup: Swag
@@ -267,6 +270,9 @@
       orGroup: Swag
     - id: ClothingBeltChampion
       prob: 0.01
+      orGroup: Swag
+    - id: MobFinfin
+      prob: 0.001
       orGroup: Swag
     #plushies
     - id: PlushieRGBee
@@ -290,6 +296,8 @@
     - id: PlushieLizard
       prob: 0.01
       orGroup: Plushies
+    - id: PlushieFinfin
+      prob: 0.01
     - id: PlushieRouny
       prob: 0.01
       orGroup: Plushies

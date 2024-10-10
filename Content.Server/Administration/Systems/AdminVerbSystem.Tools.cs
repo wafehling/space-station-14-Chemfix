@@ -7,8 +7,11 @@ using Content.Server.Atmos.Components;
 using Content.Server.Cargo.Components;
 using Content.Server.Doors.Systems;
 using Content.Server.Hands.Systems;
+using Content.Server.Impstation.Spelfs;
 using Content.Server.Power.Components;
 using Content.Server.Power.EntitySystems;
+using Content.Server.Revenant.Components;
+using Content.Server.Revenant.EntitySystems;
 using Content.Server.Stack;
 using Content.Server.Station.Components;
 using Content.Server.Station.Systems;
@@ -24,7 +27,9 @@ using Content.Shared.Damage.Components;
 using Content.Shared.Database;
 using Content.Shared.Doors.Components;
 using Content.Shared.Hands.Components;
+using Content.Shared.Impstation.Spelfs.Components;
 using Content.Shared.Inventory;
+using Content.Shared.Item;
 using Content.Shared.PDA;
 using Content.Shared.Stacks;
 using Content.Shared.Verbs;
@@ -52,9 +57,10 @@ public sealed partial class AdminVerbSystem
     [Dependency] private readonly StationJobsSystem _stationJobsSystem = default!;
     [Dependency] private readonly JointSystem _jointSystem = default!;
     [Dependency] private readonly BatterySystem _batterySystem = default!;
-    [Dependency] private readonly SharedTransformSystem _xformSystem = default!;
     [Dependency] private readonly MetaDataSystem _metaSystem = default!;
     [Dependency] private readonly GunSystem _gun = default!;
+    [Dependency] private readonly RevenantAnimatedSystem _revenantAnimate = default!;
+    [Dependency] private readonly SpelfMoodsSystem _moods = default!;
 
     private void AddTricksVerbs(GetVerbsEvent<Verb> args)
     {
@@ -90,22 +96,22 @@ public sealed partial class AdminVerbSystem
                 args.Verbs.Add(bolt);
             }
 
-            if (TryComp<AirlockComponent>(args.Target, out var airlock))
+            if (TryComp<AirlockComponent>(args.Target, out var airlockComp))
             {
                 Verb emergencyAccess = new()
                 {
-                    Text = airlock.EmergencyAccess ? "Emergency Access Off" : "Emergency Access On",
+                    Text = airlockComp.EmergencyAccess ? "Emergency Access Off" : "Emergency Access On",
                     Category = VerbCategory.Tricks,
                     Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/AdminActions/emergency_access.png")),
                     Act = () =>
                     {
-                        _airlockSystem.ToggleEmergencyAccess(args.Target, airlock);
+                        _airlockSystem.SetEmergencyAccess((args.Target, airlockComp), !airlockComp.EmergencyAccess);
                     },
                     Impact = LogImpact.Medium,
-                    Message = Loc.GetString(airlock.EmergencyAccess
+                    Message = Loc.GetString(airlockComp.EmergencyAccess
                         ? "admin-trick-emergency-access-off-description"
                         : "admin-trick-emergency-access-on-description"),
-                    Priority = (int) (airlock.EmergencyAccess ? TricksVerbPriorities.EmergencyAccessOff : TricksVerbPriorities.EmergencyAccessOn),
+                    Priority = (int) (airlockComp.EmergencyAccess ? TricksVerbPriorities.EmergencyAccessOff : TricksVerbPriorities.EmergencyAccessOn),
                 };
                 args.Verbs.Add(emergencyAccess);
             }
@@ -327,7 +333,7 @@ public sealed partial class AdminVerbSystem
                 Act = () =>
                 {
                     var (mapUid, gridUid) = _adminTestArenaSystem.AssertArenaLoaded(player);
-                    _xformSystem.SetCoordinates(args.Target, new EntityCoordinates(gridUid ?? mapUid, Vector2.One));
+                    _transformSystem.SetCoordinates(args.Target, new EntityCoordinates(gridUid ?? mapUid, Vector2.One));
                 },
                 Impact = LogImpact.Medium,
                 Message = Loc.GetString("admin-trick-send-to-test-arena-description"),
@@ -533,7 +539,7 @@ public sealed partial class AdminVerbSystem
                     if (shuttle is null)
                         return;
 
-                    _xformSystem.SetCoordinates(args.User, new EntityCoordinates(shuttle.Value, Vector2.Zero));
+                    _transformSystem.SetCoordinates(args.User, new EntityCoordinates(shuttle.Value, Vector2.Zero));
                 },
                 Impact = LogImpact.Low,
                 Message = Loc.GetString("admin-trick-locate-cargo-shuttle-description"),
@@ -734,6 +740,60 @@ public sealed partial class AdminVerbSystem
             };
             args.Verbs.Add(setCapacity);
         }
+
+        if (TryComp<ItemComponent>(args.Target, out var item))
+        {
+            Verb makeAnimate = new()
+            {
+                Text = "Animate Item",
+                Category = VerbCategory.Tricks,
+                Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/Actions/animate.png")),
+                Act = () =>
+                {
+                    _revenantAnimate.TryAnimateObject(args.Target, TimeSpan.FromSeconds(60));
+                },
+                Impact = LogImpact.High,
+                Message = Loc.GetString("admin-trick-make-animate-description"),
+                Priority = (int) TricksVerbPriorities.MakeAnimate,
+            };
+            args.Verbs.Add(makeAnimate);
+        }
+
+        if (TryComp<RevenantAnimatedComponent>(args.Target, out var animate))
+        {
+            Verb makeInanimate = new()
+            {
+                Text = "Inanimate Item",
+                Category = VerbCategory.Tricks,
+                Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/Actions/inanimate.png")),
+                Act = () =>
+                {
+                    _revenantAnimate.InanimateTarget(args.Target, animate);
+                },
+                Impact = LogImpact.High,
+                Message = Loc.GetString("admin-trick-make-inanimate-description"),
+                Priority = (int) TricksVerbPriorities.MakeInanimate,
+            };
+            args.Verbs.Add(makeInanimate);
+        }
+
+        if (TryComp<SpelfMoodsComponent>(args.Target, out var moods))
+        {
+            Verb addRandomMood = new()
+            {
+                Text = "Add Random Mood",
+                Category = VerbCategory.Tricks,
+                // TODO: Icon
+                Act = () =>
+                {
+                    _moods.TryAddRandomMood(args.Target);
+                },
+                Impact = LogImpact.High,
+                Message = Loc.GetString("admin-trick-add-random-mood-description"),
+                Priority = (int) TricksVerbPriorities.AddRandomMood,
+            };
+            args.Verbs.Add(addRandomMood);
+        }
     }
 
     private void RefillEquippedTanks(EntityUid target, Gas gasType)
@@ -879,5 +939,9 @@ public sealed partial class AdminVerbSystem
         SnapJoints = -27,
         MakeMinigun = -28,
         SetBulletAmount = -29,
+        MakeAnimate = -30,
+        MakeInanimate = -31,
+        AddRandomMood = -32,
+        AddCustomMood = -33,
     }
 }

@@ -775,6 +775,33 @@
     energy: 0.5
 
 - type: entity
+  id: BulletGrenadeCleaner
+  name: cleaner grenade
+  parent: BaseBulletTrigger
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles2.rsi
+    layers:
+      - state: frag
+  - type: SoundOnTrigger
+    sound: /Audio/Items/smoke_grenade_smoke.ogg
+  - type: SmokeOnTrigger
+    duration: 15
+    spreadAmount: 25
+    smokePrototype: Foam
+    solution:
+      reagents:
+      - ReagentId: SpaceCleaner
+        Quantity: 30
+  - type: Ammo
+    muzzleFlash: null
+  - type: PointLight
+    radius: 3.5
+    color: blue
+    energy: 0.5
+
+- type: entity
   id: BulletCap
   name: cap bullet
   parent: BaseBullet
@@ -983,7 +1010,7 @@
       - HideContextMenu
 
 - type: entity
-  name: laser bolt 
+  name: laser bolt
   id: BulletLaser
   parent: BaseBullet
   categories: [ HideSpawnMenu ]
@@ -1023,43 +1050,32 @@
 - type: entity
   name: wide laser barrage
   id: BulletLaserSpread
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   parent: BulletLaser
   components:
   - type: ProjectileSpread
     proto: BulletLaser
     count: 5 #65 heat damage if you hit all your shots, but wide spread
-    spread: 30 
-
-- type: entity
-  name : heavy laser bolt
-  id: BulletLaserHeavy
-  parent: BulletLaser
-  categories: [ HideSpawnMenu ]
-  components:
-  - type: Projectile
-    damage:
-      types:
-        Heat: 15
+    spread: 30
 
 - type: entity
   name: narrow laser barrage
-  id: BulletLaserHeavySpread
-  noSpawn: true
+  id: BulletLaserSpreadNarrow
+  categories: [ HideSpawnMenu ]
   parent: BulletLaser
   components:
   - type: ProjectileSpread
-    proto: BulletLaserHeavy
-    count: 4 #60 heat damage if you hit all your shots, but narrower spread
+    proto: BulletLaser
+    count: 4 #52 heat damage if you hit all your shots, but narrower spread
     spread: 10
 
 - type: entity
   name: disabling laser barrage
   id: BulletDisablerSmgSpread
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   parent: BulletDisablerSmg
   components:
   - type: ProjectileSpread
     proto: BulletDisablerSmg
     count: 3 #bit stronger than a disabler if you hit your shots you goober, still not a 2 hit stun though
-    spread: 9 
+    spread: 9

@@ -1,4 +1,4 @@
-﻿- type: entity
+- type: entity
   id: ImmovableRod
   name: immovable rod
   description: You can sense that it's hungry. That's usually a bad sign.
@@ -32,6 +32,39 @@
   - type: WarpPoint
     follow: true
     location: immovable rod
+
+# goob edit
+- type: entity
+  id: ImmovableVoidRod
+  name: immovable void rod
+  description: You can sense that it's hungry. That's usually a bad sign.
+  components:
+  - type: Clickable
+  - type: InteractionOutline
+  - type: MovementIgnoreGravity
+  - type: Sprite
+    sprite: Goobstation/Heretic/abilities_heretic.rsi
+    state: immovable_rod
+    noRot: false
+  - type: ImmovableVoidRod
+  - type: Physics
+    bodyType: Dynamic
+    linearDamping: 0
+  - type: PointLight
+    radius: 3
+    color: blue
+    energy: 2.0
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeCircle
+          radius: 0.5
+        density: 1
+        hard: false
+        layer:
+        - Impassable
+        - Opaque
 
 - type: entity
   id: ImmovableRodDespawn
@@ -86,6 +119,34 @@
   - type: MovementAlwaysTouching
   - type: NoSlip
 
+# For Artifact Polymorph
+- type: entity
+  parent: ImmovableRod
+  id: ImmovableRodArtifactPoly
+  suffix: Victim
+  components:
+  - type: ImmovableRod
+    minSpeed: 1
+    maxSpeed: 3
+    destroyTiles: false
+    randomizeVelocity: false
+    shouldGib: false
+    damage:
+      types:
+        Blunt: 200
+  - type: MovementIgnoreGravity
+    gravityState: true
+  - type: InputMover
+  - type: MovementSpeedModifier
+    weightlessAcceleration: 5
+    weightlessModifier: 2
+    weightlessFriction: 0
+    friction: 0
+    frictionNoInput: 0
+  - type: CanMoveInAir
+  - type: MovementAlwaysTouching
+  - type: NoSlip
+
 - type: entity
   parent: ImmovableRodKeepTiles
   id: ImmovableRodKeepTilesStill
@@ -118,6 +179,26 @@
     state: blue
     rotation: 90
     noRot: false
+
+- type: entity
+  parent: ImmovableRodKeepTilesStill
+  id: ImmovableRodFinFin
+  name: immovable Fin Fin
+  description: Your best friend! Don't touch him though.
+  components:
+  - type: Sprite
+    sprite: Mobs/Pets/finfin.rsi
+    state: finfin
+    rotation: 0
+    noRot: false
+  - type: EmitSoundOnSpawn
+    sound:
+      path: /Audio/Effects/comeandseehim.ogg
+  - type: PointLight
+    radius: 3
+    color: blue
+    energy: 2.0
+
 
 - type: entity
   parent: ImmovableRodKeepTilesStill
@@ -177,3 +258,38 @@
     state: icon
     rotation: 225
     noRot: false
+
+- type: entity
+  parent: ImmovableRodKeepTilesStill
+  id: ImmovableRodWeh
+  name: immovable weh
+  description: WEH!
+  components:
+  - type: Sprite
+    sprite: Objects/Fun/toys.rsi
+    state: plushie_lizard
+    noRot: false
+
+- type: entity
+  parent: ImmovableRodKeepTiles
+  id: ImmovableRodGondal
+  name: immovable gondal
+  description: FUCK
+  components:
+  - type: ImmovableRod
+    minSpeed: 0.25
+    maxSpeed: 0.25
+  - type: TimedDespawn
+    lifetime: 141.0
+  - type: EmitSoundOnSpawn
+    sound:
+      path: /Audio/Effects/gondalmono.ogg
+  - type: Sprite
+    sprite: Mobs/Aliens/gondal.rsi
+    state: gondal
+    rotation: 0
+    noRot: false
+  - type: PointLight
+    radius: 3
+    color: white
+    energy: 2.0

@@ -1,0 +1,10 @@
+- type: weightedRandom
+  id: RandomAnnouncers
+  weights:
+    Intern: 0.1
+    MedBot: 0.6
+    Michael: 0.3
+    NEIL: 0.3
+    TikTok: 0.1
+    VoxFem: 1.2
+    Stern: 0.2

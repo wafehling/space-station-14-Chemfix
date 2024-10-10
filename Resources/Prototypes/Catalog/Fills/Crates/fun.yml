@@ -39,6 +39,7 @@
     - id: PlushieMoth
     - id: PlushieArachind
     - id: PlushiePenguin
+    - id: PlushieGray
 
 - type: entity
   id: CrateFunPlushie
@@ -69,6 +70,17 @@
         - id: PlushieSpaceLizard
           amount: !type:ConstantNumberSelector
             value: 3
+
+- type: entity
+  id: CrateFunFinfinPlushie
+  parent: CrateGenericSteel
+  name: one single fin fin plushie
+  description: A single ultra-rare plushie of the dolphin-bird Fin Fin. You aren't... actually going to buy this one, are you?
+  components:
+  - type: StorageFill
+    contents:
+      - id: PlushieFinfin
+        amount: 1
 
 - type: entity
   id: CrateFunInstrumentsVariety
@@ -334,6 +346,7 @@
       - id: ClothingHeadHatMagician
       - id: BeachBall
       - id: ClothingShoesSkates
+      - id: RubberChicken
 
 - type: entity
   id: CrateFunBikeHornImplants
@@ -376,3 +389,13 @@
         amount: 1
         prob: 0.05
 
+- type: entity
+  id: CrateFun500Cigarettes
+  parent: CrateGenericSteel
+  name: 500 cigarettes
+  description: The tingles... Do you feel them?
+  components:
+  - type: StorageFill
+    contents:
+      - id: StackOfCigs
+        amount: 1

@@ -5,6 +5,7 @@
   name: survival-title
   showInVote: false # secret
   description: survival-description
+  cooldown: 2
   rules:
     - MeteorSwarmScheduler
     - RampingStationEventScheduler
@@ -21,6 +22,7 @@
   name: kessler-syndrome-title
   showInVote: false # secret
   description: kessler-syndrome-description
+  cooldown: 1
   rules:
     - KesslerSyndromeScheduler
     - RampingStationEventScheduler
@@ -39,6 +41,7 @@
     - Traitor
     - Revolutionary
     - Zombie
+    - Changeling
     - KesslerSyndromeScheduler
     - RampingStationEventScheduler
     - SpaceTrafficControlEventScheduler
@@ -52,13 +55,14 @@
   - badidea
   - punishment
   name: aller-at-once-title
-  description: all-at-once-description
+  description: aller-at-once-description
   showInVote: false #Please god dont do this
   rules:
     - Nukeops
     - Traitor
     - Revolutionary
     - Zombie
+    - Changeling
     - BasicStationEventScheduler
     - KesslerSyndromeScheduler
     - MeteorSwarmMildScheduler
@@ -91,7 +95,7 @@
   showInVote: false #4boring4vote
   description: greenshift-description
   rules:
-  - SpaceTrafficControlFriendlyEventScheduler 
+  - SpaceTrafficControlFriendlyEventScheduler
   - BasicRoundstartVariation
 
 - type: gamePreset
@@ -126,7 +130,7 @@
   showInVote: false #Admin Use
   description: secret-description
   rules:
-  - SpaceTrafficControlFriendlyEventScheduler 
+  - SpaceTrafficControlFriendlyEventScheduler
   - BasicRoundstartVariation
 
 - type: gamePreset
@@ -157,6 +161,63 @@
     - BasicRoundstartVariation
 
 - type: gamePreset
+  id: SpyVsSpy
+  alias:
+    - svs
+    - theship
+  name: spy-vs-spy-title
+  description: spy-vs-spy-description
+  showInVote: false
+  cooldown: 2
+  rules:
+    - SpyVsSpy
+    - SleeperlessStationEventScheduler
+    - MeteorSwarmScheduler
+    - SpaceTrafficControlEventScheduler
+    - BasicRoundstartVariation
+
+- type: gamePreset
+  id: SpyVsSpy3TC
+  name: spy-vs-spy-title
+  description: spy-vs-spy-description
+  showInVote: false
+  cooldown: 2
+  rules:
+    - SpyVsSpy3TC
+    - SleeperlessStationEventScheduler
+    - MeteorSwarmScheduler
+    - SpaceTrafficControlEventScheduler
+    - BasicRoundstartVariation
+
+- type: gamePreset
+  id: SecretSpyVsSpy #For Admin Use: Runs SpyVsSpy but shows "Secret" in lobby.
+  alias:
+    - secretsvs
+  name: secret-title
+  description: secret-description
+  showInVote: false #Admin Use
+  rules:
+    - SpyVsSpy
+    - SleeperlessStationEventScheduler
+    - MeteorSwarmScheduler
+    - SpaceTrafficControlEventScheduler
+    - BasicRoundstartVariation
+
+- type: gamePreset
+  id: SecretSpyVsSpy3TC #For Admin Use: Runs SpyVsSpy3TC but shows "Secret" in lobby.
+  alias:
+    - secretsvs
+  name: secret-title
+  description: secret-description
+  showInVote: false #Admin Use
+  rules:
+    - SpyVsSpy3TC
+    - SleeperlessStationEventScheduler
+    - MeteorSwarmScheduler
+    - SpaceTrafficControlEventScheduler
+    - BasicRoundstartVariation
+
+- type: gamePreset
   id: Deathmatch
   alias:
     - deathmatch
@@ -176,6 +237,7 @@
   name: nukeops-title
   description: nukeops-description
   showInVote: false
+  cooldown: 1
   rules:
     - Nukeops
     - SubGamemodesRule
@@ -212,6 +274,7 @@
   name: zombie-title
   description: zombie-description
   showInVote: false
+  cooldown: 1
   rules:
   - Zombie
   - BasicStationEventScheduler
@@ -228,9 +291,61 @@
   name: zombieteors-title
   description: zombieteors-description
   showInVote: false
+  cooldown: 1
   rules:
   - Zombie
   - BasicStationEventScheduler
   - KesslerSyndromeScheduler
   - SpaceTrafficControlEventScheduler
   - BasicRoundstartVariation
+
+- type: gamePreset
+  id: Changeling
+  alias:
+    - ling
+    - lings
+    - changeling
+  name: changeling-gamemode-title
+  description: changeling-gamemode-description
+  showInVote: false
+  rules:
+    - Changeling
+    - SubGamemodesRule
+    - BasicStationEventScheduler
+    - MeteorSwarmScheduler
+    - SpaceTrafficControlEventScheduler
+    - BasicRoundstartVariation
+
+- type: gamePreset
+  id: Secretling
+  alias:
+    - sling
+    - slings
+    - secretling
+  name: secret-title
+  description: secret-description
+  showInVote: false
+  rules:
+    - Changeling
+    - SubGamemodesRule
+    - BasicStationEventScheduler
+    - MeteorSwarmScheduler
+    - SpaceTrafficControlEventScheduler
+    - BasicRoundstartVariation
+
+- type: gamePreset
+  id: Traitorling
+  alias:
+    - lingtraitor
+    - traitorling
+  name: secret-title
+  description: secret-description
+  showInVote: false
+  rules:
+    - Changeling
+    - Traitor
+    - SubGamemodesRule
+    - BasicStationEventScheduler
+    - MeteorSwarmScheduler
+    - SpaceTrafficControlEventScheduler
+    - BasicRoundstartVariation

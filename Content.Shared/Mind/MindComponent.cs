@@ -30,6 +30,11 @@ public sealed partial class MindComponent : Component
     public List<EntityUid> Objectives = new();
 
     /// <summary>
+    ///     List of entities assigned to this mind's target objectives, if applicable.
+    /// </summary>
+    public List<EntityUid> ObjectiveTargets = new();
+
+    /// <summary>
     ///     The session ID of the player owning this mind.
     /// </summary>
     [DataField, AutoNetworkedField, Access(typeof(SharedMindSystem))]

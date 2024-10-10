@@ -221,13 +221,14 @@ public sealed partial class CriminalRecordsConsoleWindow : FancyWindow
     {
         var na = Loc.GetString("generic-not-available-shorthand");
         PersonName.Text = stationRecord.Name;
+        PersonGender.Text = Loc.GetString("general-station-record-console-record-gender", ("gender", stationRecord.Gender));
         PersonPrints.Text = Loc.GetString("general-station-record-console-record-fingerprint", ("fingerprint", stationRecord.Fingerprint ?? na));
         PersonDna.Text = Loc.GetString("general-station-record-console-record-dna", ("dna", stationRecord.DNA ?? na));
 
         StatusOptionButton.SelectId((int) criminalRecord.Status);
         if (criminalRecord.Reason is {} reason)
         {
-            var message = FormattedMessage.FromMarkup(Loc.GetString("criminal-records-console-wanted-reason"));
+            var message = FormattedMessage.FromMarkupOrThrow(Loc.GetString("criminal-records-console-wanted-reason"));
             message.AddText($": {reason}");
             WantedReason.SetMessage(message);
             WantedReason.Visible = true;
