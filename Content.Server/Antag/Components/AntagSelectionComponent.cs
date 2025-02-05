@@ -3,7 +3,6 @@ using Content.Shared.Antag;
 using Content.Shared.Destructible.Thresholds;
 using Content.Shared.Preferences.Loadouts;
 using Content.Shared.Roles;
-using Content.Shared.Storage;
 using Content.Shared.Whitelist;
 using Robust.Shared.Audio;
 using Robust.Shared.Player;
@@ -43,6 +42,12 @@ public sealed partial class AntagSelectionComponent : Component
     /// Is not serialized.
     /// </summary>
     public HashSet<ICommonSession> SelectedSessions = new();
+
+    /// <summary>
+    /// Cached sessions of players who are chosen. Used so we don't have to rebuild the pool multiple times in a tick.
+    /// Is not serialized.
+    /// </summary>
+    public HashSet<ICommonSession> ProcessedSessions = new();
 
     /// <summary>
     /// Locale id for the name of the antag.
@@ -116,6 +121,12 @@ public partial struct AntagSelectionDefinition()
     [DataField]
     public bool LateJoinAdditional = false;
 
+    /// <summary>
+    /// If true, all possible players who have this antag type enabled will be selected. Includes latejoins if LateJoinAdditional is true.
+    /// </summary>
+    [DataField]
+    public bool ForceAllPossible = false;
+
     //todo: find out how to do this with minimal boilerplate: filler department, maybe?
     //public HashSet<ProtoId<JobPrototype>> JobBlacklist = new()
 
@@ -145,9 +156,16 @@ public partial struct AntagSelectionDefinition()
 
     /// <summary>
     /// Components added to the player's mind.
+    /// Do NOT use this to add role-type components. Add those as MindRoles instead
     /// </summary>
     [DataField]
     public ComponentRegistry MindComponents = new();
+
+    /// <summary>
+    /// List of Mind Role Prototypes to be added to the player's mind.
+    /// </summary>
+    [DataField]
+    public List<EntProtoId>? MindRoles;
 
     /// <summary>
     /// A set of starting gear that's equipped to the player.

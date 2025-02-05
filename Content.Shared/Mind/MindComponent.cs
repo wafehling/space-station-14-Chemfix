@@ -1,9 +1,11 @@
-using Content.Shared.Actions;
+using Content.Shared.FixedPoint;
 using Content.Shared.GameTicking;
 using Content.Shared.Mind.Components;
+using Content.Shared.Store;
 using Robust.Shared.GameStates;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
+using Robust.Shared.Prototypes;
 
 namespace Content.Shared.Mind;
 
@@ -30,6 +32,11 @@ public sealed partial class MindComponent : Component
     public List<EntityUid> Objectives = new();
 
     /// <summary>
+    ///     List of entities assigned to this mind's target objectives, if applicable.
+    /// </summary>
+    public List<EntityUid> ObjectiveTargets = new();
+
+    /// <summary>
     ///     The session ID of the player owning this mind.
     /// </summary>
     [DataField, AutoNetworkedField, Access(typeof(SharedMindSystem))]
@@ -46,9 +53,9 @@ public sealed partial class MindComponent : Component
     ///     The first entity that this mind controlled. Used for round end information.
     ///     Might be relevant if the player has ghosted since.
     /// </summary>
-    [DataField, AutoNetworkedField]
-    public NetEntity? OriginalOwnedEntity;
-    // This is a net entity, because this field currently ddoes not get set to null when this entity is deleted.
+    [AutoNetworkedField]
+    public NetEntity? OriginalOwnedEntity; // TODO WeakEntityReference make this a Datafield again
+    // This is a net entity, because this field currently does not get set to null when this entity is deleted.
     // This is a lazy way to ensure that people check that the entity still exists.
     // TODO MIND Fix this properly by adding an OriginalMindContainerComponent or something like that.
 
@@ -87,16 +94,26 @@ public sealed partial class MindComponent : Component
     /// <summary>
     ///     Prevents user from ghosting out
     /// </summary>
-    [ViewVariables(VVAccess.ReadWrite)]
-    [DataField("preventGhosting")]
+    [DataField]
     public bool PreventGhosting { get; set; }
 
     /// <summary>
     ///     Prevents user from suiciding
     /// </summary>
-    [ViewVariables(VVAccess.ReadWrite)]
-    [DataField("preventSuicide")]
+    [DataField]
     public bool PreventSuicide { get; set; }
+
+    /// <summary>
+    ///     Mind Role Entities belonging to this Mind
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public List<EntityUid> MindRoles = new List<EntityUid>();
+
+    /// <summary>
+    ///     The mind's current antagonist/special role, or lack thereof;
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public ProtoId<RoleTypePrototype> RoleType = "Neutral";
 
     /// <summary>
     ///     The session of the player owning this mind.

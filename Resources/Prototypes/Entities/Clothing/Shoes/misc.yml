@@ -32,7 +32,7 @@
     sprite: Clothing/Shoes/Misc/slippers.rsi
 
 - type: entity
-  parent: ClothingShoesBaseButcherable
+  parent: ClothingShoesClownBase #imp edit
   id: ClothingShoeSlippersDuck
   name: ducky slippers
   # description: You wish these made quacking sounds as you walked.
@@ -47,11 +47,18 @@
       collection: FootstepDuck
       params:
         variation: 0.07
-  - type: WaddleWhenWorn
-    tumbleIntensity: 10 # smaller than clown shoes
   - type: Construction
     graph: ClothingShoeSlippersDuck
     node: shoes
+  #start imp edit
+  - type: ItemToggle
+    onUse: false
+    onActivate: false
+    soundActivate: 
+      path: /Audio/_Impstation/Effects/Footsteps/quack_on.ogg
+    soundDeactivate: 
+      path: /Audio/_Impstation/Effects/Footsteps/quack_off.ogg
+  #end imp edit
 
 - type: entity
   parent: ClothingShoesBaseButcherable
@@ -116,6 +123,7 @@
     price: 500
   - type: PowerCellDraw
     drawRate: 4
+  - type: ToggleCellDraw
   - type: ItemSlots
     slots:
       cell_slot:

@@ -1,7 +1,6 @@
 using Content.Server.Administration.Logs;
 using Content.Server.Body.Components;
 using Content.Server.Body.Systems;
-using Content.Server.Chemistry.Containers.EntitySystems;
 using Content.Server.EntityEffects.Effects;
 using Content.Server.Spreader;
 using Content.Shared.Chemistry;
@@ -12,6 +11,8 @@ using Content.Shared.Chemistry.Reagent;
 using Content.Shared.Database;
 using Content.Shared.FixedPoint;
 using Content.Shared.Smoking;
+using Content.Shared.Whitelist;
+using Content.Shared.Examine;
 using Robust.Server.GameObjects;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Physics;
@@ -21,6 +22,7 @@ using Robust.Shared.Physics.Systems;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
+using Robust.Shared.Utility;
 using System.Linq;
 
 using TimedDespawnComponent = Robust.Shared.Spawners.TimedDespawnComponent;
@@ -44,7 +46,8 @@ public sealed class SmokeSystem : EntitySystem
     [Dependency] private readonly ReactiveSystem _reactive = default!;
     [Dependency] private readonly SharedBroadphaseSystem _broadphase = default!;
     [Dependency] private readonly SharedPhysicsSystem _physics = default!;
-    [Dependency] private readonly SolutionContainerSystem _solutionContainerSystem = default!;
+    [Dependency] private readonly SharedSolutionContainerSystem _solutionContainerSystem = default!;
+    [Dependency] private readonly EntityWhitelistSystem _whitelistSystem = default!;
 
     private EntityQuery<SmokeComponent> _smokeQuery;
     private EntityQuery<SmokeAffectedComponent> _smokeAffectedQuery;
@@ -62,6 +65,7 @@ public sealed class SmokeSystem : EntitySystem
         SubscribeLocalEvent<SmokeComponent, ReactionAttemptEvent>(OnReactionAttempt);
         SubscribeLocalEvent<SmokeComponent, SolutionRelayEvent<ReactionAttemptEvent>>(OnReactionAttempt);
         SubscribeLocalEvent<SmokeComponent, SpreadNeighborsEvent>(OnSmokeSpread);
+        SubscribeLocalEvent<SmokeComponent, ExaminedEvent>(OnExamined);
     }
 
     /// <inheritdoc/>
@@ -292,7 +296,7 @@ public sealed class SmokeSystem : EntitySystem
         if (_blood.TryAddToChemicals(entity, transferSolution, bloodstream))
         {
             // Log solution addition by smoke
-            _logger.Add(LogType.ForceFeed, LogImpact.Medium, $"{ToPrettyString(entity):target} ingested smoke {SolutionContainerSystem.ToPrettyString(transferSolution)}");
+            _logger.Add(LogType.ForceFeed, LogImpact.Medium, $"{ToPrettyString(entity):target} ingested smoke {SharedSolutionContainerSystem.ToPrettyString(transferSolution)}");
         }
     }
 
@@ -347,5 +351,73 @@ public sealed class SmokeSystem : EntitySystem
 
         var color = solution.GetColor(_prototype);
         _appearance.SetData(smoke.Owner, SmokeVisuals.Color, color, smoke.Comp2);
+    }
+
+    /// <summary>
+    /// Allows particular entities to examine the smoke #IMP
+    /// </summary>
+    private void OnExamined(EntityUid uid, SmokeComponent component, ExaminedEvent args)
+    {
+        if (component.Solution is null)
+            return;
+
+        if (component.ContentsViewers is null)
+            component.ContentsViewers = new EntityWhitelist();
+        //Allow ghosts to examine by default
+        if (component.AllowGhostExamine)
+            if (component.ContentsViewers.Components is null)
+            {
+                component.ContentsViewers.Components = ["Ghost"];
+            } else if (component.ContentsViewers.Components.AsQueryable().Contains("Ghost")){
+                var tempList = component.ContentsViewers.Components.ToList();
+                tempList.Add("Ghost");
+                component.ContentsViewers.Components = tempList.ToArray();
+            }
+
+        if (_whitelistSystem.IsWhitelistFail(component.ContentsViewers, args.Examiner) || component.Solution is null)
+            return;
+
+        if (!_solutionContainerSystem.ResolveSolution(uid, SmokeComponent.SolutionName, ref component.Solution, out var solution) ||
+            solution.Contents.Count == 0)
+        {
+            return;
+        }
+
+        args.PushMessage(GetSolutionExamine(solution));
+    }
+
+    // Taken from SharedSolutionContainerSystem #IMP
+    private FormattedMessage GetSolutionExamine(Solution solution)
+    {
+        var msg = new FormattedMessage();
+
+        if (solution.Volume == 0)
+        {
+            msg.AddMarkupOrThrow(Loc.GetString("scannable-solution-empty-container"));
+            return msg;
+        }
+
+        msg.AddMarkupOrThrow(Loc.GetString("scannable-solution-main-text"));
+
+        var reagentPrototypes = solution.GetReagentPrototypes(_prototype);
+
+        // Sort the reagents by amount, descending then alphabetically
+        var sortedReagentPrototypes = reagentPrototypes
+            .OrderByDescending(pair => pair.Value.Value)
+            .ThenBy(pair => pair.Key.LocalizedName);
+
+        foreach (var (proto, quantity) in sortedReagentPrototypes)
+        {
+            msg.PushNewline();
+            msg.AddMarkupOrThrow(Loc.GetString("scannable-solution-chemical"
+                , ("type", proto.LocalizedName)
+                , ("color", proto.SubstanceColor.ToHexNoAlpha())
+                , ("amount", quantity)));
+        }
+
+        msg.PushNewline();
+        msg.AddMarkupOrThrow(Loc.GetString("scannable-solution-temperature", ("temperature", Math.Round(solution.Temperature))));
+
+        return msg;
     }
 }

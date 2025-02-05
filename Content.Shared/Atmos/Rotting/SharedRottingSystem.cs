@@ -1,4 +1,5 @@
-﻿using Content.Shared.Examine;
+using Content.Shared.Changeling;
+using Content.Shared.Examine;
 using Content.Shared.IdentityManagement;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
@@ -25,6 +26,7 @@ public abstract class SharedRottingSystem : EntitySystem
         SubscribeLocalEvent<PerishableComponent, MobStateChangedEvent>(OnMobStateChanged);
         SubscribeLocalEvent<PerishableComponent, ExaminedEvent>(OnPerishableExamined);
 
+        SubscribeLocalEvent<RottingComponent, ComponentStartup>(OnStartup);
         SubscribeLocalEvent<RottingComponent, ComponentShutdown>(OnShutdown);
         SubscribeLocalEvent<RottingComponent, MobStateChangedEvent>(OnRottingMobStateChanged);
         SubscribeLocalEvent<RottingComponent, RejuvenateEvent>(OnRejuvenate);
@@ -62,6 +64,11 @@ public abstract class SharedRottingSystem : EntitySystem
         args.PushMarkup(Loc.GetString(description, ("target", Identity.Entity(perishable, EntityManager))));
     }
 
+    private void OnStartup(Entity<RottingComponent> ent, ref ComponentStartup args)
+    {
+        ent.Comp.NextRotUpdate = _timing.CurTime + ent.Comp.RotUpdateRate;
+    }
+
     private void OnShutdown(EntityUid uid, RottingComponent component, ComponentShutdown args)
     {
         if (TryComp<PerishableComponent>(uid, out var perishable))
@@ -96,6 +103,17 @@ public abstract class SharedRottingSystem : EntitySystem
             description += "-nonmob";
 
         args.PushMarkup(Loc.GetString(description, ("target", Identity.Entity(uid, EntityManager))));
+
+        if (HasComp<ChangelingComponent>(args.Examiner) && !HasComp<AbsorbedComponent>(uid))
+        {
+            var changelingDescription = stage switch
+            {
+                >= 2 => "changeling-examine-extremely-bloated",
+                _ => "changeling-examine-rotting"
+            };
+
+            args.PushMarkup(Loc.GetString(changelingDescription, ("target", Identity.Entity(uid, EntityManager))));
+        }
     }
 
     /// <summary>
@@ -114,6 +132,10 @@ public abstract class SharedRottingSystem : EntitySystem
         // things don't perish by default.
         if (!Resolve(uid, ref perishable, false))
             return false;
+
+        // Overrides all the other checks.
+        if (perishable.ForceRotProgression)
+            return true;
 
         // only dead things or inanimate objects can rot
         if (TryComp<MobStateComponent>(uid, out var mobState) && !_mobState.IsDead(uid, mobState))

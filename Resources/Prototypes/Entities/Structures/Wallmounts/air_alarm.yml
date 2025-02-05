@@ -7,6 +7,7 @@
     snap:
     - Wallmount
   components:
+  - type: StationAiWhitelist
   - type: WallMount
   - type: ApcPowerReceiver
   - type: Electrified
@@ -53,6 +54,8 @@
       - AirAlarm
   - type: AtmosDevice
   - type: AirAlarm
+  - type: AtmosAlertsDevice
+    group: AirAlarm
   - type: Clickable
   - type: InteractionOutline
   - type: UserInterface
@@ -88,7 +91,7 @@
     graph: AirAlarm
     node: air_alarm
   - type: Damageable
-    damageContainer: Inorganic
+    damageContainer: StructuralInorganic
     damageModifierSet: Metallic
   - type: Destructible
     thresholds:
@@ -139,3 +142,31 @@
     node: assembly
   - type: Transform
     anchored: true
+
+- type: entity
+  id: AirAlarmXeno
+  parent: AirAlarm
+  name: air alarm
+  description: An alien air alarm. Hopefully they didn't breathe poison.
+  components:
+  - type: Sprite
+    sprite: Structures/Wallmounts/air_monitors_xeno.rsi
+    layers:
+    - state: alarm0
+      map: ["airAlarmBase"] # TODO: fire alarm enum
+    - state: alarmx
+      map: ["enum.WiresVisualLayers.MaintenancePanel"]
+  - type: Construction
+
+- type: entity
+  id: AirAlarmAssemblyXeno
+  parent: AirAlarmAssembly
+  name: air alarm assembly
+  description: An alien air alarm. Why are the wires pulsating?...
+  components:
+  - type: Sprite
+    sprite: Structures/Wallmounts/air_monitors_xeno.rsi
+    layers:
+    - state: alarm_b1
+      map: [ "enum.ConstructionVisuals.Layer" ]
+  - type: Construction

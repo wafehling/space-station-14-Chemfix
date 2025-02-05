@@ -110,6 +110,7 @@ namespace Content.Client.Stylesheets
 
         public static readonly Color ButtonColorGoodDefault = Color.FromHex("#3E6C45");
         public static readonly Color ButtonColorGoodHovered = Color.FromHex("#31843E");
+        public static readonly Color ButtonColorGoodDisabled = Color.FromHex("#164420");
 
         //NavMap
         public static readonly Color PointRed = Color.FromHex("#B02E26");
@@ -155,6 +156,9 @@ namespace Content.Client.Stylesheets
         //Bwoink
         public const string StyleClassPinButtonPinned = "pinButtonPinned";
         public const string StyleClassPinButtonUnpinned = "pinButtonUnpinned";
+
+        //Manifest
+        public const string StyleClassCrewManifestGender = "CrewManifestGender";
 
 
         public override Stylesheet Stylesheet { get; }
@@ -694,6 +698,18 @@ namespace Content.Client.Stylesheets
                     {
                         new StyleProperty("font-color", Color.FromHex("#E5E5E581")),
                     }),
+
+                // ItemStatus for hands
+                Element()
+                    .Class(StyleClassItemStatusNotHeld)
+                    .Prop("font", notoSansItalic10)
+                    .Prop("font-color", ItemStatusNotHeldColor)
+                    .Prop(nameof(Control.Margin), new Thickness(4, 0, 0, 2)),
+
+                Element()
+                    .Class(StyleClassItemStatus)
+                    .Prop(nameof(RichTextLabel.LineHeightScale), 0.7f)
+                    .Prop(nameof(Control.Margin), new Thickness(4, 0, 0, 2)),
 
                 // Context Menu window
                 Element<PanelContainer>().Class(ContextMenuPopup.StyleClassContextMenuPopup)
@@ -1250,6 +1266,11 @@ namespace Content.Client.Stylesheets
                     .Prop("font-color", ItemStatusNotHeldColor),
 
                 Element<RichTextLabel>()
+                    .Class(StyleClassCrewManifestGender)
+                    .Prop("font", notoSansItalic10)
+                    .Prop("font-style", "italic"),
+
+                Element<RichTextLabel>()
                     .Class(StyleClassItemStatus)
                     .Prop(nameof(RichTextLabel.LineHeightScale), 0.7f)
                     .Prop(nameof(Control.Margin), new Thickness(0, 0, 0, -6)),
@@ -1482,11 +1503,38 @@ namespace Content.Client.Stylesheets
                 Element<Button>().Class("ButtonColorGreen")
                     .Prop(Control.StylePropertyModulateSelf, ButtonColorGoodDefault),
 
+                // Accept button (merge with green button?) ---
+                Element<Button>().Class("ButtonAccept")
+                    .Prop(Control.StylePropertyModulateSelf, ButtonColorGoodDefault),
+
+                Element<Button>().Class("ButtonAccept").Pseudo(ContainerButton.StylePseudoClassNormal)
+                    .Prop(Control.StylePropertyModulateSelf, ButtonColorGoodDefault),
+
+                Element<Button>().Class("ButtonAccept").Pseudo(ContainerButton.StylePseudoClassHover)
+                    .Prop(Control.StylePropertyModulateSelf, ButtonColorGoodHovered),
+
+                Element<Button>().Class("ButtonAccept").Pseudo(ContainerButton.StylePseudoClassDisabled)
+                    .Prop(Control.StylePropertyModulateSelf, ButtonColorGoodDisabled),
+
                 Element<Button>().Class("ButtonColorGreen").Pseudo(ContainerButton.StylePseudoClassNormal)
                     .Prop(Control.StylePropertyModulateSelf, ButtonColorGoodDefault),
 
                 Element<Button>().Class("ButtonColorGreen").Pseudo(ContainerButton.StylePseudoClassHover)
                     .Prop(Control.StylePropertyModulateSelf, ButtonColorGoodHovered),
+
+                // Accept button (merge with green button?) ---
+                Element<Button>().Class("ButtonAccept")
+                    .Prop(Control.StylePropertyModulateSelf, ButtonColorGoodDefault),
+
+                Element<Button>().Class("ButtonAccept").Pseudo(ContainerButton.StylePseudoClassNormal)
+                    .Prop(Control.StylePropertyModulateSelf, ButtonColorGoodDefault),
+
+                Element<Button>().Class("ButtonAccept").Pseudo(ContainerButton.StylePseudoClassHover)
+                    .Prop(Control.StylePropertyModulateSelf, ButtonColorGoodHovered),
+
+                Element<Button>().Class("ButtonAccept").Pseudo(ContainerButton.StylePseudoClassDisabled)
+                    .Prop(Control.StylePropertyModulateSelf, ButtonColorGoodDisabled),
+
                 // ---
 
                 // Small Button ---

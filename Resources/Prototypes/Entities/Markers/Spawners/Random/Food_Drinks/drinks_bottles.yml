@@ -24,17 +24,21 @@
       - DrinkMelonLiquorBottleFull
       - DrinkPatronBottleFull
       - DrinkRumBottleFull
+      - DrinkSakeBottleFull
       - DrinkTequilaBottleFull
       - DrinkVermouthBottleFull
       - DrinkVodkaBottleFull
       - DrinkWhiskeyBottleFull
       - DrinkWineBottleFull
       - DrinkBeerBottleFull
+      - DrinkBeerGrowler
       - DrinkAleBottleFull
+      - DrinkAleBottleFullGrowler
       - DrinkChampagneBottleFull
     chance: 0.8
     offset: 0.0
     #rare
     rarePrototypes:
+      - DrinkAppleMartiniCrystalLiteBottleFull
       - DrinkPoisonWinebottleFull
-    rareChance: 0.01
+    rareChance: 0.1

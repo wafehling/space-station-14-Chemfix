@@ -1,4 +1,4 @@
-station-event-ion-storm-start-announcement = Ion storm detected near the station. Please check all AI-controlled equipment for errors.
+station-event-ion-storm-announcement = Ion storm detected near the station. Please check all AI-controlled equipment for errors.
 
 ion-storm-law-scrambled-number = [font="Monospace"][scramble rate=250 length={$length} chars="@@###$$&%!01"/][/font]
 
@@ -9,6 +9,7 @@ ion-storm-the-job = THE {$job}
 ion-storm-clowns = CLOWNS
 ion-storm-heads = HEADS OF STAFF
 ion-storm-crew = CREW
+ion-storm-people = PEOPLE
 
 ion-storm-adjective-things = {$adjective} THINGS
 ion-storm-x-and-y = {$x} AND {$y}

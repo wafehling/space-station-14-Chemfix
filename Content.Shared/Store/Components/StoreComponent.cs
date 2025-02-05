@@ -1,8 +1,8 @@
+using Content.Shared._White.StoreDiscount;
 using Content.Shared.FixedPoint;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
-using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
 
 namespace Content.Shared.Store.Components;
 
@@ -45,16 +45,16 @@ public sealed partial class StoreComponent : Component
     public EntityUid? AccountOwner = null;
 
     /// <summary>
-    /// All listings, including those that aren't available to the buyer
+    /// Cached list of listings items with modifiers.
     /// </summary>
     [DataField]
-    public HashSet<ListingData> Listings = new();
+    public HashSet<ListingDataWithCostModifiers> FullListingsCatalog = new();
 
     /// <summary>
     /// All available listings from the last time that it was checked.
     /// </summary>
     [ViewVariables]
-    public HashSet<ListingData> LastAvailableListings = new();
+    public HashSet<ListingDataWithCostModifiers> LastAvailableListings = new();
 
     /// <summary>
     ///     All current entities bought from this shop. Useful for keeping track of refunds and upgrades.
@@ -87,6 +87,11 @@ public sealed partial class StoreComponent : Component
     [DataField]
     public EntityUid? StartingMap;
 
+    // WD EDIT START
+    [DataField]
+    public SalesSpecifier Sales { get; private set; } = new();
+    // WD EDIT END
+
     #region audio
     /// <summary>
     /// The sound played to the buyer when a purchase is succesfully made.
@@ -106,6 +111,19 @@ public readonly record struct StoreAddedEvent;
 /// </summary>
 [ByRefEvent]
 public readonly record struct StoreRemovedEvent;
+/// <summary>
+/// Event that is broadcast when a store is refunded
+/// </summary>
+[ByRefEvent]
+public readonly struct StoreRefundedEvent
+{
+    public EntityUid Uid { get; }
+
+    public StoreRefundedEvent(EntityUid uid)
+    {
+        Uid = uid;
+    }
+}
 
 /// <summary>
 ///     Broadcast when an Entity with the <see cref="StoreRefundComponent"/> is deleted

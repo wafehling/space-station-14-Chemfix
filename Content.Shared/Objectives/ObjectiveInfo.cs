@@ -1,3 +1,4 @@
+using Content.Shared.Objectives.Components;
 using Robust.Shared.Serialization;
 using Robust.Shared.Utility;
 
@@ -14,4 +15,4 @@ namespace Content.Shared.Objectives;
 /// If anything is null it will be logged and return null.
 /// </remarks>
 [Serializable, NetSerializable]
-public record struct ObjectiveInfo(string Title, string Description, SpriteSpecifier Icon, float Progress);
+public record struct ObjectiveInfo(string Title, string Description, SpriteSpecifier Icon, float Progress, bool Trivial = true);

@@ -1,8 +1,12 @@
+using Content.Shared.Interaction;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Item.ItemToggle.Components;
 using Content.Shared.Popups;
+using Content.Shared.Projectiles;
 using Content.Shared.Temperature;
+using Content.Shared.Throwing;
 using Content.Shared.Toggleable;
+using Content.Shared.Verbs;
 using Content.Shared.Wieldable;
 using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
@@ -20,22 +24,30 @@ public sealed class ItemToggleSystem : EntitySystem
     [Dependency] private readonly INetManager _netManager = default!;
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
     [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly SharedPointLightSystem _light = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
+    [Dependency] private readonly SharedProjectileSystem _projectile = default!;
+
+    private EntityQuery<ItemToggleComponent> _query;
 
     public override void Initialize()
     {
         base.Initialize();
+
+        _query = GetEntityQuery<ItemToggleComponent>();
 
         SubscribeLocalEvent<ItemToggleComponent, ComponentStartup>(OnStartup);
         SubscribeLocalEvent<ItemToggleComponent, MapInitEvent>(OnMapInit);
         SubscribeLocalEvent<ItemToggleComponent, ItemUnwieldedEvent>(TurnOffOnUnwielded);
         SubscribeLocalEvent<ItemToggleComponent, ItemWieldedEvent>(TurnOnOnWielded);
         SubscribeLocalEvent<ItemToggleComponent, UseInHandEvent>(OnUseInHand);
+        SubscribeLocalEvent<ItemToggleComponent, GetVerbsEvent<ActivationVerb>>(OnActivateVerb);
+        SubscribeLocalEvent<ItemToggleComponent, ActivateInWorldEvent>(OnActivate);
 
         SubscribeLocalEvent<ItemToggleHotComponent, IsHotEvent>(OnIsHotEvent);
 
         SubscribeLocalEvent<ItemToggleActiveSoundComponent, ItemToggledEvent>(UpdateActiveSound);
+        SubscribeLocalEvent<ItemToggleThrowingAngleComponent, ItemToggledEvent>(UpdateThrowingAngle);
+        SubscribeLocalEvent<ItemToggleEmbeddableProjectileComponent, ItemToggledEvent>(UpdateEmbeddableProjectile);
     }
 
     private void OnStartup(Entity<ItemToggleComponent> ent, ref ComponentStartup args)
@@ -62,6 +74,32 @@ public sealed class ItemToggleSystem : EntitySystem
         Toggle((ent, ent.Comp), args.User, predicted: ent.Comp.Predictable);
     }
 
+    private void OnActivateVerb(Entity<ItemToggleComponent> ent, ref GetVerbsEvent<ActivationVerb> args)
+    {
+        if (!args.CanAccess || !args.CanInteract || !ent.Comp.OnActivate)
+            return;
+
+        var user = args.User;
+
+        args.Verbs.Add(new ActivationVerb()
+        {
+            Text = !ent.Comp.Activated ? Loc.GetString(ent.Comp.VerbToggleOn) : Loc.GetString(ent.Comp.VerbToggleOff),
+            Act = () =>
+            {
+                Toggle((ent.Owner, ent.Comp), user, predicted: ent.Comp.Predictable);
+            }
+        });
+    }
+
+    private void OnActivate(Entity<ItemToggleComponent> ent, ref ActivateInWorldEvent args)
+    {
+        if (args.Handled || !ent.Comp.OnActivate)
+            return;
+
+        args.Handled = true;
+        Toggle((ent.Owner, ent.Comp), args.User, predicted: ent.Comp.Predictable);
+    }
+
     /// <summary>
     /// Used when an item is attempted to be toggled.
     /// Sets its state to the opposite of what it is.
@@ -69,7 +107,7 @@ public sealed class ItemToggleSystem : EntitySystem
     /// <returns>Same as <see cref="TrySetActive"/></returns>
     public bool Toggle(Entity<ItemToggleComponent?> ent, EntityUid? user = null, bool predicted = true)
     {
-        if (!Resolve(ent, ref ent.Comp))
+        if (!_query.Resolve(ent, ref ent.Comp, false))
             return false;
 
         return TrySetActive(ent, !ent.Comp.Activated, user, predicted);
@@ -92,7 +130,7 @@ public sealed class ItemToggleSystem : EntitySystem
     /// </summary>
     public bool TryActivate(Entity<ItemToggleComponent?> ent, EntityUid? user = null, bool predicted = true)
     {
-        if (!Resolve(ent, ref ent.Comp))
+        if (!_query.Resolve(ent, ref ent.Comp, false))
             return false;
 
         var uid = ent.Owner;
@@ -135,7 +173,7 @@ public sealed class ItemToggleSystem : EntitySystem
     /// </summary>
     public bool TryDeactivate(Entity<ItemToggleComponent?> ent, EntityUid? user = null, bool predicted = true)
     {
-        if (!Resolve(ent, ref ent.Comp))
+        if (!_query.Resolve(ent, ref ent.Comp, false))
             return false;
 
         var uid = ent.Owner;
@@ -199,16 +237,7 @@ public sealed class ItemToggleSystem : EntitySystem
         if (TryComp(ent, out AppearanceComponent? appearance))
         {
             _appearance.SetData(ent, ToggleVisuals.Toggled, ent.Comp.Activated, appearance);
-
-            if (ent.Comp.ToggleLight)
-                _appearance.SetData(ent, ToggleableLightVisuals.Enabled, ent.Comp.Activated, appearance);
         }
-
-        if (!ent.Comp.ToggleLight)
-            return;
-
-        if (_light.TryGetLight(ent, out var light))
-            _light.SetEnabled(ent, ent.Comp.Activated, light);
     }
 
     /// <summary>
@@ -230,7 +259,7 @@ public sealed class ItemToggleSystem : EntitySystem
 
     public bool IsActivated(Entity<ItemToggleComponent?> ent)
     {
-        if (!Resolve(ent, ref ent.Comp, false))
+        if (!_query.Resolve(ent, ref ent.Comp, false))
             return true; // assume always activated if no component
 
         return ent.Comp.Activated;
@@ -258,12 +287,111 @@ public sealed class ItemToggleSystem : EntitySystem
 
         if (comp.ActiveSound != null && comp.PlayingStream == null)
         {
-            var loop = AudioParams.Default.WithLoop(true);
+            var loop = comp.ActiveSound.Params.WithLoop(true);
             var stream = args.Predicted
                 ? _audio.PlayPredicted(comp.ActiveSound, uid, args.User, loop)
                 : _audio.PlayPvs(comp.ActiveSound, uid, loop);
             if (stream?.Entity is {} entity)
                 comp.PlayingStream = entity;
+        }
+    }
+
+    /// <summary>
+    /// Used to update the throwing angle on item toggle.
+    /// </summary>
+    private void UpdateThrowingAngle(EntityUid uid, ItemToggleThrowingAngleComponent component, ref ItemToggledEvent args)
+    {
+        if (component.DeleteOnDeactivate)
+        {
+            if (args.Activated)
+            {
+                var newThrowingAngle = new ThrowingAngleComponent();
+
+                if (component.ActivatedAngle is { } activatedAngle)
+                    newThrowingAngle.Angle = activatedAngle;
+
+                if (component.ActivatedAngularVelocity is { } activatedAngularVelocity)
+                    newThrowingAngle.AngularVelocity = activatedAngularVelocity;
+
+                AddComp(uid, newThrowingAngle);
+            }
+            else
+                RemCompDeferred<ThrowingAngleComponent>(uid);
+            return;
+        }
+
+        if (!TryComp<ThrowingAngleComponent>(uid, out var throwingAngle))
+            return;
+
+        if (args.Activated)
+        {
+            component.DeactivatedAngle ??= throwingAngle.Angle;
+            if (component.ActivatedAngle is { } activatedAngle)
+                throwingAngle.Angle = activatedAngle;
+
+            component.DeactivatedAngularVelocity ??= throwingAngle.AngularVelocity;
+            if (component.ActivatedAngularVelocity is { } activatedAngularVelocity)
+                throwingAngle.AngularVelocity = activatedAngularVelocity;
+        }
+        else
+        {
+            if (component.DeactivatedAngle is { } deactivatedAngle)
+                throwingAngle.Angle = deactivatedAngle;
+
+            if (component.DeactivatedAngularVelocity is { } deactivatedAngularVelocity)
+                throwingAngle.AngularVelocity = deactivatedAngularVelocity;
+        }
+    }
+
+    /// <summary>
+    ///   Used to update the embeddable stats on item toggle.
+    /// </summary>
+    private void UpdateEmbeddableProjectile(EntityUid uid, ItemToggleEmbeddableProjectileComponent component, ItemToggledEvent args)
+    {
+        if (!TryComp<EmbeddableProjectileComponent>(uid, out var embeddable))
+            return;
+
+        if (args.Activated)
+        {
+            component.DeactivatedRemovalTime ??= embeddable.RemovalTime;
+            if (component.ActivatedRemovalTime is { } activatedRemovalTime)
+                embeddable.RemovalTime = activatedRemovalTime;
+
+            component.DeactivatedOffset ??= embeddable.Offset;
+            if (component.ActivatedOffset is { } activatedOffset)
+                embeddable.Offset = activatedOffset;
+
+            component.DeactivatedEmbedOnThrow ??= embeddable.EmbedOnThrow;
+            if (component.ActivatedEmbedOnThrow is { } activatedEmbedOnThrow)
+            {
+                embeddable.EmbedOnThrow = activatedEmbedOnThrow;
+
+                if (embeddable.Target != null && activatedEmbedOnThrow == false)
+                    _projectile.RemoveEmbed(uid, embeddable);
+            }
+
+            component.DeactivatedSound ??= embeddable.Sound;
+            if (component.ActivatedSound is { } activatedSound)
+                embeddable.Sound = activatedSound;
+        }
+        else
+        {
+            if (component.DeactivatedRemovalTime is { } deactivatedRemovalTime)
+                embeddable.RemovalTime = deactivatedRemovalTime;
+
+            if (component.DeactivatedOffset is { } deactivatedOffset)
+                embeddable.Offset = deactivatedOffset;
+
+            if (component.DeactivatedEmbedOnThrow is { } deactivatedEmbedOnThrow)
+            {
+                embeddable.EmbedOnThrow = deactivatedEmbedOnThrow;
+
+                if (embeddable.Target != null && deactivatedEmbedOnThrow == false)
+                    _projectile.RemoveEmbed(uid, embeddable);
+            }
+
+            if (component.DeactivatedSound is { } deactivatedSound)
+                embeddable.Sound = deactivatedSound;
         }
     }
 }

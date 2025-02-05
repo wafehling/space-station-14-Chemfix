@@ -89,7 +89,7 @@
   id: Autolathe
   parent: BaseLatheLube
   name: autolathe
-  description: It produces basic items using metal and glass.
+  description: It produces basic items using metal and glass. Has the ability to process blueprints to print new recipes.
   components:
   - type: Sprite
     sprite: Structures/Machines/autolathe.rsi
@@ -137,8 +137,6 @@
       - AirTank
       - GasAnalyzer
       - UtilityBelt
-      - Fulton
-      - FultonBeacon
       - Pickaxe
       - ModularReceiver
       - AppraisalTool
@@ -150,8 +148,11 @@
       - LedLightTube
       - SodiumLightTube
       - ExteriorLightTube
+      - UvLightTube # imp
       - LightBulb
       - LedLightBulb
+      - DimLightBulb
+      - WarmLightBulb
       - Bucket
       - DrinkMug
       - DrinkMugMetal
@@ -165,11 +166,13 @@
       - FoodPlateSmallPlastic
       - FoodBowlBig
       - FoodPlateTin
+      - FoodPlateMuffinTin
       - FoodKebabSkewer
       - SprayBottle
       - MopItem
       - Holoprojector
       - Mousetrap
+      - DeskBell # imp
       - LightReplacer
       - TrashBag
       - PowerCellSmall
@@ -200,10 +203,16 @@
       - ClothingHeadHatWelding
       - WetFloorSign
       - ClothingHeadHatCone
+      - FreezerElectronics
+      - Flare
+      - TapeRecorder # DV
+      - CassetteTape # DV
+    dynamicRecipes:
+      - Fulton
+
   - type: EmagLatheRecipes
     emagStaticRecipes:
       - BoxLethalshot
-      - BoxShotgunFlare
       - BoxShotgunSlug
       - CombatKnife
       - MagazineBoxLightRifle
@@ -226,6 +235,18 @@
       - RiotShield
       - SpeedLoaderMagnum
       - SpeedLoaderMagnumEmpty
+  - type: BlueprintReceiver
+    whitelist:
+      tags:
+      - BlueprintAutolathe
+  - type: ContainerContainer
+    containers:
+      machine_board: !type:Container
+      machine_parts: !type:Container
+      blueprint: !type:Container
+  - type: EmptyOnMachineDeconstruct
+    containers:
+    - blueprint
 
 - type: entity
   id: AutolatheHyperConvection
@@ -240,7 +261,7 @@
 
 - type: entity
   id: Protolathe
-  parent: BaseLatheLube
+  parent: [ BaseLatheLube, BaseScienceContraband ] # imp
   name: protolathe
   description: Converts raw materials into advanced items.
   components:
@@ -274,10 +295,12 @@
     - LargeBeaker
     - Dropper
     - ClothingEyesGlassesChemical
+    - SGDRecipe #imp special
     dynamicRecipes:
       - PowerDrill
       - MiningDrill
       - MiningDrillDiamond
+      - FultonBeacon
       - AnomalyScanner
       - AnomalyLocator
       - AnomalyLocatorWide
@@ -295,6 +318,8 @@
       - Implanter
       - PillCanister
       - ChemistryEmptyBottle01
+      - BaseChemistryEmptyVial # imp
+      - Drone # imp
       - AdvMopItem
       - WeaponSprayNozzle
       - ClothingBackpackWaterTank
@@ -312,6 +337,8 @@
       - PowerCellHigh
       - WeaponPistolCHIMP
       - ClothingMaskWeldingGas
+      - MineralScannerEmpty
+      - AdvancedMineralScannerEmpty
       - WeaponGauntletGorilla
       - SynthesizerInstrument
       - ClothingShoesBootsMagSci
@@ -325,7 +352,6 @@
       - WeaponLaserSvalinn
       - WeaponProtoKineticAccelerator
       - WeaponTetherGun
-      - WeaponGrapplingGun
       - ClothingBackpackHolding
       - ClothingBackpackSatchelHolding
       - ClothingBackpackDuffelHolding
@@ -338,6 +364,8 @@
       - FauxTileAstroSnow
       - OreBagOfHolding
       - DeviceQuantumSpinInverter
+      - CleanerGrenade #imp addition
+      - PlantAnalyzer #NF addition
   - type: EmagLatheRecipes
     emagDynamicRecipes:
       - BoxBeanbag
@@ -345,10 +373,12 @@
       - BoxShotgunUranium
       - BoxShellTranquilizer
       - ExplosivePayload
+      - FullAutoConversionKit # imp
       - GrenadeBlast
       - GrenadeEMP
       - GrenadeFlash
       - HoloprojectorSecurity
+      - HyperBurstConversionKit # imp
       - MagazineBoxLightRifleIncendiary
       - MagazineBoxLightRifleUranium
       - MagazineBoxMagnumIncendiary
@@ -357,7 +387,11 @@
       - MagazineBoxPistolUranium
       - MagazineBoxRifleIncendiary
       - MagazineBoxRifleUranium
+      - MagazineDMRIncendiary #imp
+      - MagazineDMRUranium #imp
       - MagazineGrenadeEmpty
+      - MagazineLPistolIncendiary #imp
+      - MagazineLPistolUranium #imp
       - MagazineLightRifleIncendiary
       - MagazineLightRifleUranium
       - MagazinePistolIncendiary
@@ -393,7 +427,7 @@
 
 - type: entity
   id: CircuitImprinter
-  parent: BaseLatheLube
+  parent: [ BaseLatheLube, BaseScienceContraband ] # imp
   name: circuit imprinter
   description: Prints circuit boards for machines.
   components:
@@ -418,6 +452,7 @@
     - ProtolatheMachineCircuitboard
     - AutolatheMachineCircuitboard
     - CircuitImprinterMachineCircuitboard
+    - BiogeneratorMachineCircuitboard
     - OreProcessorMachineCircuitboard
     - ElectrolysisUnitMachineCircuitboard
     - CentrifugeMachineCircuitboard
@@ -428,6 +463,7 @@
     - UniformPrinterMachineCircuitboard
     - FloorGreenCircuit
     - FloorBlueCircuit
+    - FloorRedCircuit
     - MicrowaveMachineCircuitboard
     - ReagentGrinderMachineCircuitboard
     - ElectricGrillMachineCircuitboard
@@ -435,6 +471,10 @@
     - SodaDispenserMachineCircuitboard
     - SpaceHeaterMachineCircuitBoard
     - CutterMachineCircuitboard
+    - SalvageMagnetMachineCircuitboard
+    - ShipyardComputerCircuitboard
+    - ServiceTechFabCircuitboard #imp addition
+    - SupermatterComputerCircuitboard # imp
     dynamicRecipes:
       - ThermomachineFreezerMachineCircuitBoard
       - HellfireFreezerMachineCircuitBoard
@@ -457,7 +497,6 @@
       - SolarControlComputerCircuitboard
       - SolarTrackerElectronics
       - TurboItemRechargerCircuitboard
-      - PowerComputerCircuitboard
       - AutolatheHyperConvectionMachineCircuitboard
       - ProtolatheHyperConvectionMachineCircuitboard
       - CircuitImprinterHyperConvectionMachineCircuitboard
@@ -482,13 +521,12 @@
       - PortableGeneratorPacmanMachineCircuitboard
       - PortableGeneratorSuperPacmanMachineCircuitboard
       - PortableGeneratorJrPacmanMachineCircuitboard
-      - WallmountGeneratorElectronics
-      - WallmountGeneratorAPUElectronics
       - WallmountSubstationElectronics
       - PowerCageRechargerCircuitboard
       - EmitterCircuitboard
       - ThrusterMachineCircuitboard
       - GyroscopeMachineCircuitboard
+      - MiniGyroscopeMachineCircuitboard
       - MiniGravityGeneratorCircuitboard
       - ShuttleGunKineticCircuitboard
       - GasRecyclerMachineCircuitboard
@@ -505,6 +543,8 @@
       - MassMediaCircuitboard
       - ReagentGrinderIndustrialMachineCircuitboard
       - JukeboxCircuitBoard
+      - SMESAdvancedMachineCircuitboard
+      - HolopadMachineCircuitboard
   - type: EmagLatheRecipes
     emagDynamicRecipes:
       - ShuttleGunDusterCircuitboard
@@ -532,7 +572,7 @@
 
 - type: entity
   id: ExosuitFabricator
-  parent: BaseLatheLube
+  parent: [ BaseLatheLube, BaseScienceContraband ] # imp
   name: exosuit fabricator
   description: Creates parts for robotics and other mechanical needs.
   components:
@@ -558,11 +598,7 @@
     - BorgModuleFireExtinguisher
     - BorgModuleRadiationDetection
     - BorgModuleTool
-    - BorgModuleAppraisal
-    - BorgModuleConstruction
-    - BorgModuleService
-    - BorgModuleTreatment
-    - BorgModuleCleaning
+    - BorgModuleArtistic #imp special
     - CyborgEndoskeleton
     - LeftArmBorg
     - RightArmBorg
@@ -570,50 +606,15 @@
     - RightLegBorg
     - LightHeadBorg
     - TorsoBorg
-    - LeftArmBorgEngineer
-    - RightArmBorgEngineer
-    - LeftLegBorgEngineer
-    - RightLegBorgEngineer
-    - HeadBorgEngineer
-    - TorsoBorgEngineer
-    - LeftLegBorgJanitor
-    - RightLegBorgJanitor
-    - HeadBorgJanitor
-    - TorsoBorgJanitor
-    - LeftArmBorgMedical
-    - RightArmBorgMedical
-    - LeftLegBorgMedical
-    - RightLegBorgMedical
-    - HeadBorgMedical
-    - TorsoBorgMedical
-    - LeftArmBorgMining
-    - RightArmBorgMining
-    - LeftLegBorgMining
-    - RightLegBorgMining
-    - HeadBorgMining
-    - TorsoBorgMining
-    - LeftArmBorgService
-    - RightArmBorgService
-    - LeftLegBorgService
-    - RightLegBorgService
-    - HeadBorgService
-    - TorsoBorgService
     dynamicRecipes:
     - ProximitySensor
-    - BorgModuleLightReplacer
     - BorgModuleAdvancedCleaning
-    - BorgModuleMining
-    - BorgModuleGrapplingGun
     - BorgModuleAdvancedTool
     - BorgModuleGPS
-    - BorgModuleRCD
     - BorgModuleArtifact
     - BorgModuleAnomaly
     - BorgModuleGardening
     - BorgModuleHarvesting
-    - BorgModuleMusique
-    - BorgModuleClowning
-    - BorgModuleDiagnosis
     - BorgModuleDefibrillator
     - BorgModuleAdvancedTreatment
     - RipleyHarness
@@ -694,7 +695,7 @@
 
 - type: entity
   id: SecurityTechFab
-  parent: BaseLatheLube
+  parent: [ BaseLatheLube, BaseSecurityContraband ] # imp
   name: security techfab
   description: Prints equipment for use by security crew.
   components:
@@ -716,9 +717,10 @@
   - type: Lathe
     idleState: icon
     runningState: icon
+    unlitIdleState: unlit
+    unlitRunningState: unlit-building
     staticRecipes:
       - BoxLethalshot
-      - BoxShotgunFlare
       - BoxShotgunPractice
       - BoxShotgunSlug
       - ClothingEyesHudSecurity
@@ -730,12 +732,19 @@
       - MagazineBoxLightRiflePractice
       - MagazineBoxMagnum
       - MagazineBoxMagnumPractice
+      - MagazineBoxLPistol #imp
+      - MagazineBoxLPistolPractice #imp
       - MagazineBoxPistol
       - MagazineBoxPistolPractice
       - MagazineBoxRifle
       - MagazineBoxRiflePractice
+      - MagazineDMR #imp
+      - MagazineDMREmpty #imp
       - MagazineLightRifle
       - MagazineLightRifleEmpty
+      - MagazineLPistol #imp
+      - MagazineLPistolEmpty #imp
+      - MagazineLPistolPractice #imp
       - MagazinePistol
       - MagazinePistolEmpty
       - MagazinePistolSubMachineGun
@@ -755,6 +764,7 @@
       - TargetHuman
       - TargetSyndicate
       - WeaponDisablerPractice
+      - WeaponFlareGunSecurity
       - WeaponLaserCarbinePractice
       - Zipties
     dynamicRecipes:
@@ -765,21 +775,29 @@
       - ClothingBackpackElectropack
       - ExplosivePayload
       - FlashPayload
+      - FullAutoConversionKit # imp
       - GrenadeBlast
       - GrenadeEMP
       - GrenadeFlash
       - HoloprojectorSecurity
+      - HyperBurstConversionKit # imp
       - MagazineBoxLightRifleIncendiary
       - MagazineBoxLightRifleUranium
+      - MagazineBoxLPistolIncendiary #imp
+      - MagazineBoxLPistolUranium #imp
       - MagazineBoxMagnumIncendiary
       - MagazineBoxMagnumUranium
       - MagazineBoxPistolIncendiary
       - MagazineBoxPistolUranium
       - MagazineBoxRifleIncendiary
       - MagazineBoxRifleUranium
+      - MagazineDMRIncendiary #imp
+      - MagazineDMRUranium #imp
       - MagazineGrenadeEmpty
       - MagazineLightRifleIncendiary
       - MagazineLightRifleUranium
+      - MagazineLPistolIncendiary #imp
+      - MagazineLPistolUranium #imp
       - MagazinePistolIncendiary
       - MagazinePistolUranium
       - MagazineRifleIncendiary
@@ -805,6 +823,8 @@
       - WeaponAdvancedLaser
       - WeaponDisabler
       - WeaponDisablerSMG
+      - WeaponShotgunKammererBeanbag
+      - WeaponShotgunEnforcerBeanbag
       - WeaponLaserCannon
       - WeaponLaserCarbine
       - WeaponXrayCannon
@@ -817,7 +837,7 @@
 
 - type: entity
   id: AmmoTechFab
-  parent: BaseLatheLube
+  parent: [ BaseLatheLube, BaseSecurityContraband ] # imp
   name: ammo techfab
   description: Prints the bare minimum of bullets that any budget military or armory could need. Nothing fancy.
   components:
@@ -839,17 +859,22 @@
     - type: Lathe
       idleState: icon
       runningState: icon
+      unlitIdleState: unlit
+      unlitRunningState: unlit-building
       staticRecipes:
         - BoxLethalshot
-        - BoxShotgunFlare
         - BoxShotgunSlug
         - BoxShellTranquilizer
         - MagazineBoxLightRifle
         - MagazineBoxMagnum
         - MagazineBoxPistol
         - MagazineBoxRifle
+        - MagazineDMR #imp
+        - MagazineDMREmpty #imp
         - MagazineLightRifle
         - MagazineLightRifleEmpty
+        - MagazineLPistol #imp
+        - MagazineLPistolEmpty #imp
         - MagazinePistol
         - MagazinePistolEmpty
         - MagazineRifle
@@ -868,7 +893,7 @@
 
 - type: entity
   id: MedicalTechFab
-  parent: BaseLatheLube
+  parent: [ BaseLatheLube, BaseMedicalContraband ] # imp
   name: medical techfab
   description: Prints equipment for use by the medbay.
   components:
@@ -888,6 +913,8 @@
   - type: Lathe
     idleState: icon
     runningState: icon
+    unlitIdleState: unlit
+    unlitRunningState: unlit-building
     staticRecipes:
       - Brutepack
       - Ointment
@@ -908,6 +935,7 @@
       - PillCanister
       - BodyBag
       - ChemistryEmptyBottle01
+      - BaseChemistryEmptyVial # imp
       - RollerBedSpawnFolded
       - CheapRollerBedSpawnFolded
       - EmergencyRollerBedSpawnFolded
@@ -927,6 +955,9 @@
       - Hemostat
       - ClothingEyesGlassesChemical
       - WhiteCane
+      - PrescriptionLens # imp
+      - PrescriptionLensStrong # imp
+      - BlindingLens # imp
     dynamicRecipes:
       - ChemicalPayload
       - CryostasisBeaker
@@ -965,6 +996,7 @@
       - ClothingUniformJumpskirtBartender
       - ClothingHeadHatCapcap
       - ClothingHeadHatCaptain
+      - ClothingHeadHatBeretCaptain # imp
       - ClothingUniformJumpsuitCaptain
       - ClothingUniformJumpskirtCaptain
       - ClothingUniformJumpsuitCapFormal
@@ -972,6 +1004,7 @@
       - ClothingUniformJumpsuitCargo
       - ClothingUniformJumpskirtCargo
       - ClothingUniformJumpsuitSalvageSpecialist
+      - ClothingUniformJumpskirtSalvageSpecialist # imp
       - ClothingHeadHatBeretEngineering
       - ClothingUniformJumpsuitChiefEngineer
       - ClothingUniformJumpskirtChiefEngineer
@@ -1056,6 +1089,9 @@
       - ClothingUniformJumpsuitWarden
       - ClothingUniformJumpskirtWarden
       - ClothingHeadHatParamedicsoft
+      - ClothingUniformJumpsuitCourier #Imp
+      - ClothingUniformJumpskirtCourier #Imp
+      - ClothingHeadHatCouriersoft #Imp
       # Winter outfits
       - ClothingOuterWinterCap
       - ClothingOuterWinterCE
@@ -1085,6 +1121,8 @@
       - ClothingOuterWinterSci
       - ClothingOuterWinterRobo
       - ClothingOuterWinterSec
+      - ClothingOuterWinterBrigmedic
+      - ClothingOuterWinterCourier #Imp
       # Ties
       - ClothingNeckTieRed
       - ClothingNeckTieDet
@@ -1108,8 +1146,39 @@
       - CarpetPurple
       - CarpetCyan
       - CarpetWhite
+      # Pride Cloaks
+      - ClothingNeckCloakTrans
+      - ClothingNeckCloakAce
+      - ClothingNeckCloakAro
+      - ClothingNeckCloakBi
+      - ClothingNeckCloakIntersex
+      - ClothingNeckCloakLesbian
+      - ClothingNeckCloakGay
+      - ClothingNeckCloakEnby
+      - ClothingNeckCloakPan
+      - ClothingNeckCloakBear
+      # Bedsheets
+      - BedsheetBlack
+      - BedsheetBlue
+      - BedsheetBrown
+      - BedsheetGreen
+      - BedsheetGrey
+      - BedsheetOrange
+      - BedsheetPurple
+      - BedsheetRed
+      - BedsheetWhite
+      - BedsheetYellow
+      - BedsheetClown
+      - BedsheetCosmos
+      - BedsheetIan
+      - BedsheetMedical
+      - BedsheetMime
+      - BedsheetNT
+      - BedsheetRainbow
+      - BedsheetBrigmedic
   - type: EmagLatheRecipes
     emagStaticRecipes:
+      # Clothing
       - ClothingHeadHatCentcomcap
       - ClothingHeadHatCentcom
       - ClothingUniformJumpsuitCentcomAgent
@@ -1132,12 +1201,77 @@
       - ClothingOuterWinterCentcom
       - ClothingOuterWinterSyndie
       - ClothingOuterWinterSyndieCap
+      - ClothingNeckCloakStraight
+      # Bedsheets
+      - BedsheetSyndie
   - type: MaterialStorage
     whitelist:
       tags:
         - Sheet
         - RawMaterial
         - Ingot
+
+- type: entity
+  id: Biogenerator
+  parent: BaseLathe
+  name: biogenerator
+  description: Converts plants into biomass, which can be used to construct useful items.
+  components:
+  - type: Sprite
+    sprite: Structures/Machines/biofabricator.rsi
+    snapCardinals: true
+    layers:
+    - state: icon
+      map: ["enum.LatheVisualLayers.IsRunning"]
+    - state: unlit
+      shader: unshaded
+      map: ["enum.PowerDeviceVisualLayers.Powered"]
+    - state: inserting
+      map: ["enum.MaterialStorageVisualLayers.Inserting"]
+    - state: panel
+      map: ["enum.WiresVisualLayers.MaintenancePanel"]
+  - type: Machine
+    board: BiogeneratorMachineCircuitboard
+  - type: MaterialStorage
+  - type: ProduceMaterialExtractor
+  - type: ItemSlots
+    slots:
+      beaker_slot:
+        name: lathe-component-output-slot-beaker-name
+        whitelist:
+          components:
+          - FitsInDispenser
+  - type: ContainerContainer
+    containers:
+      machine_board: !type:Container
+      machine_parts: !type:Container
+      beaker_slot: !type:ContainerSlot
+  - type: Lathe
+    reagentOutputSlotId: beaker_slot
+    idleState: icon
+    runningState: building
+    staticRecipes:
+    - BioGenMilk
+    - BioGenMilkSoy
+    - BioGenEthanol
+    - BioGenCream
+    - BioGenBlackpepper
+    - BioGenEnzyme
+    - BioGenFlour
+    - BioGenSugar
+    - BioGenMonkeyCube
+    - BioGenKoboldCube
+    - BioGenMaterialCloth1
+    - BioGenMaterialCardboard1
+    - BioGenPaper
+    - BioGenPaperRolling1
+    - BioGenCandle
+    - BioGenPlantBGone
+    - BioGenWeedKiller
+    - BioGenPestKiller
+    - BioGenLeft4Zed
+    - BioGenEZNutrient
+    - BioGenRobustHarvest
 
 - type: entity
   parent: BaseLathe
@@ -1171,7 +1305,7 @@
       staticRecipes:
         - SheetSteel
         - SheetGlass1
-        - SheetRGlass
+        - SheetRGlassRaw
         - SheetPlasma1
         - SheetPGlass1
         - SheetRPGlass1
@@ -1192,12 +1326,12 @@
   - type: Machine
     board: OreProcessorIndustrialMachineCircuitboard
   - type: Lathe
-    materialUseMultiplier: 0.75
+    materialUseMultiplier: 0.50 # imp, from 1.5x more sheets to 2x
     timeMultiplier: 0.5
     staticRecipes:
       - SheetSteel
       - SheetGlass1
-      - SheetRGlass
+      - SheetRGlassRaw
       - SheetPlasma1
       - SheetPGlass1
       - SheetRPGlass1
@@ -1299,6 +1433,7 @@
       - FloorTileItemGratingMaint
       - FloorTileItemTechmaint
       - FloorTileItemSteelMaint
+      - FloorTileItemTechmaintDark
       - FloorTileItemWood
       - FloorTileItemWoodLarge
       - FloorTileItemWoodPattern

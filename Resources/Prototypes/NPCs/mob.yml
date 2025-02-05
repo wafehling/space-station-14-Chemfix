@@ -17,6 +17,9 @@
           task: RatServantCombatCompound
     - tasks:
         - !type:HTNCompoundTask
+          task: FollowCompound
+    - tasks:
+        - !type:HTNCompoundTask
           task: IdleCompound
 
 - type: htnCompound
@@ -87,6 +90,33 @@
     - tasks:
         - !type:HTNCompoundTask
           task: FollowCompound
+    - tasks:
+        - !type:HTNCompoundTask
+          task: IdleCompound
+
+- type: htnCompound
+  id: NiceCarpCompound
+  branches:
+    - tasks:
+        - !type:HTNCompoundTask
+          task: IdleCompound
+
+- type: htnCompound
+  id: KisserTomatoCompound
+  branches:
+    - tasks:
+        - !type:HTNCompoundTask
+          task: FollowCompound
+    - tasks:
+        - !type:HTNCompoundTask
+          task: IdleCompound
+
+- type: htnCompound
+  id: RaptorCompound
+  branches:
+    - tasks:
+        - !type:HTNCompoundTask
+          task: MeleeCombatCompound
     - tasks:
         - !type:HTNCompoundTask
           task: IdleCompound

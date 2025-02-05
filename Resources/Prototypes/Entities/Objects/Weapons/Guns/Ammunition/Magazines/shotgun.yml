@@ -1,7 +1,7 @@
 - type: entity
   id: BaseMagazineShotgun
   name: ammo drum (.50 shells)
-  parent: BaseItem
+  parent: [ BaseItem, BaseRestrictedContraband ]
   abstract: true
   components:
   - type: Tag
@@ -58,7 +58,7 @@
 
 - type: entity
   id: MagazineShotgunBeanbag
-  name: ammo drum (.50 beanbags)
+  name: ammo drum (.50 stun slug)
   parent: BaseMagazineShotgun
   components:
   - type: BallisticAmmoProvider

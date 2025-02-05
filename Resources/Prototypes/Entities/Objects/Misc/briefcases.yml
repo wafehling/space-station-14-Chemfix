@@ -12,6 +12,14 @@
   - type: Tag
     tags:
     - Briefcase
+  - type: MeleeWeapon
+    damage:
+      types:
+        Blunt: 8
+    soundHit: # imp
+      collection: GenericHit
+  - type: DamageOtherOnHit # imp
+    staminaCost: 5
 
 - type: entity
   parent: BriefcaseBase

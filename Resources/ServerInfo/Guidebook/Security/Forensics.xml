@@ -37,10 +37,14 @@
 
   <GuideEntityEmbed Entity="ForensicPad"/>
 
+  ## Classifying chemicals
+
+  Forensic pads can also be used to take a sample of a chemical and determine its contraband status.
+
   ## Fibers
   Whenenever people wearing gloves touch anything on the station, they are bound to leave behind some fibers. This complicates things, but nothing is unsolvable for a real detective.
 
-  There are up to [color=red]25[/color] different types of fibers possible. Can that stop you from solving the case?
+  There are up to [color=red]26[/color] different types of fibers possible. Can that stop you from solving the case?
 
   <Box>
     <GuideEntityEmbed Entity="ComputerStationRecords"/>

@@ -35,8 +35,8 @@
     sprite: Clothing/Head/Hats/beret_french.rsi
   - type: Clothing
     sprite: Clothing/Head/Hats/beret_french.rsi
-  - type: AddAccentClothing
-    accent: FrenchAccent
+#  - type: AddAccentClothing # Imp
+#    accent: FrenchAccent
   - type: Tag
     tags:
     - ClothMade
@@ -56,6 +56,21 @@
     tags:
     - ClothMade
     - HamsterWearable
+    - WhitelistChameleon
+
+- type: entity
+  parent: ClothingHeadBase
+  id: ClothingHeadHatSecurityTrooper
+  name: trooper hat
+  description: A campaign hat for the Nanotrasen Troopers, comes with a case too, but you lost it.
+  components:
+  - type: Sprite
+    sprite: Clothing/Head/Hats/security_trooper_hat.rsi
+  - type: Clothing
+    sprite: Clothing/Head/Hats/security_trooper_hat.rsi
+  - type: Tag
+    tags:
+    - ClothMade
     - WhitelistChameleon
 
 - type: entity
@@ -167,7 +182,7 @@
     sprite: Clothing/Head/Hats/beret_brigmedic.rsi
 
 - type: entity
-  parent: ClothingHeadBase
+  parent: [ ClothingHeadBase ]
   id: ClothingHeadHatBeretMerc
   name: mercenary beret
   description: Olive beret, the badge depicts a jackal on a rock.
@@ -220,7 +235,7 @@
   - type: IngestionBlocker
 
 - type: entity
-  parent: ClothingHeadBase
+  parent: [ ClothingHeadBase, BaseCentcommContraband ]
   id: ClothingHeadHatCentcom
   name: CentComm brand hat
   description: "It's good to be the emperor."
@@ -426,8 +441,8 @@
     sprite: Clothing/Head/Hats/sombrero.rsi
   - type: Clothing
     sprite: Clothing/Head/Hats/sombrero.rsi
-  - type: AddAccentClothing
-    accent: SpanishAccent
+#  - type: AddAccentClothing # Imp
+#    accent: SpanishAccent
 
 - type: entity
   parent: ClothingHeadBase
@@ -492,8 +507,8 @@
   - type: Clothing
     sprite: Clothing/Head/Hats/ushanka.rsi
   - type: Appearance
-  - type: AddAccentClothing
-    accent: RussianAccent
+#  - type: AddAccentClothing # Imp
+#    accent: RussianAccent
   - type: Foldable
     canFoldInsideContainer: true
   - type: FoldableClothing
@@ -609,7 +624,7 @@
     sprite: Clothing/Head/Hats/truckershat.rsi
 
 - type: entity
-  parent: [ ClothingHeadBase, BaseSyndicateContraband ]
+  parent: [ ClothingHeadBase, Tier1Contraband ]
   id: ClothingHeadPyjamaSyndicateBlack
   name: syndicate black pyjama hat
   description: For keeping that traitor head of yours warm.
@@ -620,7 +635,7 @@
     sprite: Clothing/Head/Hats/pyjamasyndicateblack.rsi
 
 - type: entity
-  parent: [ ClothingHeadBase, BaseSyndicateContraband ]
+  parent: [ ClothingHeadBase, Tier1Contraband ]
   id: ClothingHeadPyjamaSyndicatePink
   name: syndicate pink pyjama hat
   description: For keeping that traitor head of yours warm.
@@ -631,7 +646,7 @@
     sprite: Clothing/Head/Hats/pyjamasyndicatepink.rsi
 
 - type: entity
-  parent: [ ClothingHeadBase, BaseSyndicateContraband ]
+  parent: [ ClothingHeadBase, Tier1Contraband ]
   id: ClothingHeadPyjamaSyndicateRed
   name: syndicate red pyjama hat
   description: For keeping that traitor head of yours warm.
@@ -777,7 +792,22 @@
         Blunt: 0.95
 
 - type: entity
-  parent: [ClothingHeadBase, BaseSyndicateContraband]
+  parent: ClothingHeadBase
+  id: ClothingHeadHatHolyWatermelon
+  name: watermelon halo
+  description: Holy moly.
+  components:
+  - type: Sprite
+    sprite: Clothing/Head/Hats/holyhatmelon.rsi
+  - type: Clothing
+    sprite: Clothing/Head/Hats/holyhatmelon.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Caustic: 0.95
+
+- type: entity
+  parent: [ClothingHeadBase, Tier1Contraband]
   id: ClothingHeadHatSyndie
   name: syndicate hat
   description: A souvenir hat from "Syndieland", their production has already been closed.
@@ -875,7 +905,7 @@
   - type: BlockMovement
 
 - type: entity
-  parent: ClothingHeadBase
+  parent: [ ClothingHeadBase, BaseCentcommContraband ]
   id: ClothingHeadHatCentcomcap
   name: CentComm cap
   description: An extravagant, fancy Central Commander cap.
@@ -914,6 +944,7 @@
   - type: Tag
     tags:
       - WhitelistChameleon
+      - DroneUsable
       - HamsterWearable
 
 - type: entity
@@ -995,9 +1026,9 @@
       sprite: Clothing/Head/Hats/cowboyhatbrown.rsi
     - type: Clothing
       sprite: Clothing/Head/Hats/cowboyhatbrown.rsi
-    - type: AddAccentClothing
-      accent: ReplacementAccent
-      replacement: cowboy
+#    - type: AddAccentClothing
+#      accent: ReplacementAccent
+#      replacement: cowboy
 
 - type: entity
   parent: ClothingHeadHatCowboyBrown

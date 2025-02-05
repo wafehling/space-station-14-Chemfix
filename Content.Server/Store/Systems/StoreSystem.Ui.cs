@@ -1,14 +1,20 @@
+using System.Collections;
 using System.Linq;
 using Content.Server.Actions;
 using Content.Server.Administration.Logs;
+using Content.Server.Heretic.EntitySystems;
 using Content.Server.PDA.Ringer;
+using Content.Server.Roles;
 using Content.Server.Stack;
 using Content.Server.Store.Components;
 using Content.Shared.Actions;
 using Content.Shared.Database;
 using Content.Shared.FixedPoint;
 using Content.Shared.Hands.EntitySystems;
+using Content.Shared.Heretic;
+using Content.Shared.Heretic.Prototypes;
 using Content.Shared.Mind;
+using Content.Shared.Roles;
 using Content.Shared.Store;
 using Content.Shared.Store.Components;
 using Content.Shared.UserInterface;
@@ -30,7 +36,9 @@ public sealed partial class StoreSystem
     [Dependency] private readonly SharedAudioSystem _audio = default!;
     [Dependency] private readonly StackSystem _stack = default!;
     [Dependency] private readonly UserInterfaceSystem _ui = default!;
-    [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
+
+    // goobstation - heretics
+    [Dependency] private readonly HereticKnowledgeSystem _heretic = default!;
 
     private void InitializeUi()
     {
@@ -91,7 +99,8 @@ public sealed partial class StoreSystem
         //this is the person who will be passed into logic for all listing filtering.
         if (user != null) //if we have no "buyer" for this update, then don't update the listings
         {
-            component.LastAvailableListings = GetAvailableListings(component.AccountOwner ?? user.Value, store, component).ToHashSet();
+            component.LastAvailableListings = GetAvailableListings(component.AccountOwner ?? user.Value, store, component)
+                .ToHashSet();
         }
 
         //dictionary for all currencies, including 0 values for currencies on the whitelist
@@ -109,6 +118,7 @@ public sealed partial class StoreSystem
 
         // only tell operatives to lock their uplink if it can be locked
         var showFooter = HasComp<RingerUplinkComponent>(store);
+
         var state = new StoreUpdateState(component.LastAvailableListings, allCurrency, showFooter, component.RefundAllowed);
         _ui.SetUiState(store, StoreUiKey.Key, state);
     }
@@ -128,7 +138,7 @@ public sealed partial class StoreSystem
     /// </summary>
     private void OnBuyRequest(EntityUid uid, StoreComponent component, StoreBuyListingMessage msg)
     {
-        var listing = component.Listings.FirstOrDefault(x => x.Equals(msg.Listing));
+        var listing = component.FullListingsCatalog.FirstOrDefault(x => x.ID.Equals(msg.Listing.Id));
 
         if (listing == null) //make sure this listing actually exists
         {
@@ -153,9 +163,10 @@ public sealed partial class StoreSystem
         }
 
         //check that we have enough money
-        foreach (var currency in listing.Cost)
+        var cost = listing.Cost;
+        foreach (var (currency, amount) in cost)
         {
-            if (!component.Balance.TryGetValue(currency.Key, out var balance) || balance < currency.Value)
+            if (!component.Balance.TryGetValue(currency, out var balance) || balance < amount)
             {
                 return;
             }
@@ -165,13 +176,23 @@ public sealed partial class StoreSystem
             component.RefundAllowed = false;
 
         //subtract the cash
-        foreach (var (currency, value) in listing.Cost)
+        foreach (var (currency, amount) in cost)
         {
-            component.Balance[currency] -= value;
+            component.Balance[currency] -= amount;
 
             component.BalanceSpent.TryAdd(currency, FixedPoint2.Zero);
 
-            component.BalanceSpent[currency] += value;
+            component.BalanceSpent[currency] += amount;
+        }
+
+        // goobstation - heretics
+        // i am too tired of making separate systems for knowledge adding
+        // and all that shit. i've had like 4 failed attempts
+        // so i'm just gonna shitcode my way out of my misery
+        if (listing.ProductHereticKnowledge != null)
+        {
+            if (TryComp<HereticComponent>(buyer, out var heretic))
+                _heretic.AddKnowledge(buyer, heretic, (ProtoId<HereticKnowledgePrototype>) listing.ProductHereticKnowledge);
         }
 
         //spawn entity
@@ -213,7 +234,7 @@ public sealed partial class StoreSystem
 
                 if (listing.ProductUpgradeId != null)
                 {
-                    foreach (var upgradeListing in component.Listings)
+                    foreach (var upgradeListing in component.FullListingsCatalog)
                     {
                         if (upgradeListing.ID == listing.ProductUpgradeId)
                         {
@@ -254,13 +275,68 @@ public sealed partial class StoreSystem
                 RaiseLocalEvent(buyer, listing.ProductEvent);
         }
 
+        if (listing.DisableRefund)
+        {
+            component.RefundAllowed = false;
+        }
+
         //log dat shit.
         _admin.Add(LogType.StorePurchase,
             LogImpact.Low,
-            $"{ToPrettyString(buyer):player} purchased listing \"{ListingLocalisationHelpers.GetLocalisedNameOrEntityName(listing, _prototypeManager)}\" from {ToPrettyString(uid)}");
+            $"{ToPrettyString(buyer):player} purchased listing \"{ListingLocalisationHelpers.GetLocalisedNameOrEntityName(listing, _proto)}\" from {ToPrettyString(uid)}");
+
+        //imp edit - add a record of this purchase to the mind that bought this item
+        if (_mind.TryGetMind(buyer, out _, out var mindComp))
+        {
+            //get the currency that makes up most of the listing's base cost
+                //uses base cost for consistency reasons
+                //has the side effect of not tracking things that are free
+                //not sure if I want that to happen tbh? though for now all it misses is the business cards, which don't really matter w/r/t tc spend
+            ProtoId<CurrencyPrototype>? primaryCurrency = null;
+            var primaryCurrencyCost = 0;
+            foreach (var (currency, amount) in listing.OriginalCost)
+            {
+                if (primaryCurrencyCost < amount.Int()) //this assumes that the costs will be in order of priority, not great but it works:tm:
+                {
+                    primaryCurrencyCost = amount.Int();
+                    primaryCurrency = currency;
+                }
+            }
+
+            //get the role that "purchased" this item by primary currency & purchase priority.
+            var purchasePriority = -1;
+            MindRoleComponent? purchaserComp = null;
+            foreach (var mindRole in mindComp.MindRoles) //go over all of the player's mindRoles
+            {
+                foreach (var roleComp in AllComps<MindRoleComponent>(mindRole)) //go over all of their mindRole components
+                {
+                    if (roleComp.PrimaryCurrency == null)
+                        continue;
+                    if (roleComp.PrimaryCurrency == primaryCurrency && roleComp.PurchasePriority >= purchasePriority) //if the primary currencies match & thw new role has a higher priority, replace the old role with the new one
+                    {
+                        purchasePriority = roleComp.PurchasePriority;
+                        purchaserComp = roleComp;
+                    }
+                }
+            }
+
+            //get the name for the thing that was purchased
+            var productIdentifier = listing.Name ?? listing.ID;
+
+            //finally, add it to the list of purchases
+            purchaserComp?.Purchases.Add((productIdentifier, listing.Cost));
+        }
+        //imp edit end
 
         listing.PurchaseAmount++; //track how many times something has been purchased
         _audio.PlayEntity(component.BuySuccessSound, msg.Actor, uid); //cha-ching!
+
+        var buyFinished = new StoreBuyFinishedEvent
+        {
+            PurchasedItem = listing,
+            StoreUid = uid
+        };
+        RaiseLocalEvent(ref buyFinished);
 
         UpdateUserInterface(buyer, uid, component);
     }
@@ -274,6 +350,9 @@ public sealed partial class StoreSystem
     /// </remarks>
     private void OnRequestWithdraw(EntityUid uid, StoreComponent component, StoreRequestWithdrawMessage msg)
     {
+        if (msg.Amount <= 0)
+            return;
+
         //make sure we have enough cash in the bank and we actually support this currency
         if (!component.Balance.TryGetValue(msg.Currency, out var currentAmount) || currentAmount < msg.Amount)
             return;
@@ -297,7 +376,8 @@ public sealed partial class StoreSystem
             var cashId = proto.Cash[value];
             var amountToSpawn = (int) MathF.Floor((float) (amountRemaining / value));
             var ents = _stack.SpawnMultiple(cashId, amountToSpawn, coordinates);
-            _hands.PickupOrDrop(buyer, ents.First());
+            if (ents.FirstOrDefault() is {} ent)
+                _hands.PickupOrDrop(buyer, ent);
             amountRemaining -= value * amountToSpawn;
         }
 
@@ -346,10 +426,14 @@ public sealed partial class StoreSystem
         {
             component.Balance[currency] += value;
         }
+
         // Reset store back to its original state
         RefreshAllListings(component);
         component.BalanceSpent = new();
         UpdateUserInterface(buyer, uid, component);
+
+        var ev = new StoreRefundedEvent();
+        RaiseLocalEvent(uid, ref ev, true);
     }
 
     private void HandleRefundComp(EntityUid uid, StoreComponent component, EntityUid purchase)
@@ -366,13 +450,39 @@ public sealed partial class StoreSystem
     }
 
     /// <summary>
+    ///     Enables refunds for this store
+    /// </summary>
+    public void EnableRefund(EntityUid buyer, EntityUid store, StoreComponent? component = null)
+    {
+        if (!Resolve(store, ref component))
+            return;
+
+        component.RefundAllowed = true;
+
+        UpdateUserInterface(buyer, store, component);
+    }
+
+    /// <summary>
     ///     Disables refunds for this store
     /// </summary>
-    public void DisableRefund(EntityUid store, StoreComponent? component = null)
+    public void DisableRefund(EntityUid buyer, EntityUid store, StoreComponent? component = null)
     {
         if (!Resolve(store, ref component))
             return;
 
         component.RefundAllowed = false;
+
+        UpdateUserInterface(buyer, store, component);
     }
 }
+
+/// <summary>
+/// Event of successfully finishing purchase in store (<see cref="StoreSystem"/>.
+/// </summary>
+/// <param name="StoreUid">EntityUid on which store is placed.</param>
+/// <param name="PurchasedItem">ListingItem that was purchased.</param>
+[ByRefEvent]
+public readonly record struct StoreBuyFinishedEvent(
+    EntityUid StoreUid,
+    ListingDataWithCostModifiers PurchasedItem
+);

@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using Content.Server.Administration.Logs;
 using Content.Server.Atmos.EntitySystems;
 using Content.Server.Body.Systems;
-using Content.Server.Chemistry.Containers.EntitySystems;
 using Content.Server.Construction;
 using Content.Server.Destructible.Thresholds;
 using Content.Server.Destructible.Thresholds.Behaviors;
@@ -10,6 +9,7 @@ using Content.Server.Destructible.Thresholds.Triggers;
 using Content.Server.Explosion.EntitySystems;
 using Content.Server.Fluids.EntitySystems;
 using Content.Server.Stack;
+using Content.Shared.Chemistry.EntitySystems;
 using Content.Shared.Damage;
 using Content.Shared.Database;
 using Content.Shared.Destructible;
@@ -21,6 +21,7 @@ using Robust.Shared.Containers;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using System.Linq;
+using Content.Shared.Projectiles;
 
 namespace Content.Server.Destructible
 {
@@ -37,9 +38,10 @@ namespace Content.Server.Destructible
         [Dependency] public readonly ExplosionSystem ExplosionSystem = default!;
         [Dependency] public readonly StackSystem StackSystem = default!;
         [Dependency] public readonly TriggerSystem TriggerSystem = default!;
-        [Dependency] public readonly SolutionContainerSystem SolutionContainerSystem = default!;
+        [Dependency] public readonly SharedSolutionContainerSystem SolutionContainerSystem = default!;
         [Dependency] public readonly PuddleSystem PuddleSystem = default!;
         [Dependency] public readonly SharedContainerSystem ContainerSystem = default!;
+        [Dependency] public readonly SharedProjectileSystem ProjectileSystem = default!;
         [Dependency] public readonly IPrototypeManager PrototypeManager = default!;
         [Dependency] public readonly IComponentFactory ComponentFactory = default!;
         [Dependency] public readonly IAdminLogManager _adminLogger = default!;
@@ -80,6 +82,14 @@ namespace Content.Server.Destructible
                     {
                         _adminLogger.Add(LogType.Damaged, LogImpact.Medium,
                             $"Unknown damage source caused {ToPrettyString(uid):subject} to trigger [{triggeredBehaviors}]");
+                    }
+
+                    // Unembed any embedded projectiles
+                    var childEnumerator = Transform(uid).ChildEnumerator;
+                    while (childEnumerator.MoveNext(out var child))
+                    {
+                        if (TryComp<EmbeddableProjectileComponent>(child, out var embeddable))
+                            ProjectileSystem.RemoveEmbed(child, embeddable);
                     }
 
                     threshold.Execute(uid, this, EntityManager, args.Origin);
